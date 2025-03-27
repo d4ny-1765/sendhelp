@@ -1,13 +1,15 @@
 import { ColumnType, Generated } from "kysely";
 
 export type Database = {
-  book: BookTable;
+  book: messageTables;
   genre: GenreTable;
 };
 
-export type BookTable = {
-  bookId: Generated<number>;
-  bookName: string;
+export type messageTables = {
+  messageID: Generated<number>;
+  MsgTitle: string;
+  MsgBody: string;
+  
 };
 
 export type GenreTable = {
