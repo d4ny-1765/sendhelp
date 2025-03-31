@@ -1,15 +1,17 @@
 import { ColumnType, Generated } from "kysely";
 
 export type Database = {
-  book: messageTables;
+  book: messageTable;
   genre: GenreTable;
 };
 
-export type messageTables = {
-  messageID: Generated<number>;
+export type messageTable = {
+  MessageID: Generated<number>;
   MsgTitle: string;
   MsgBody: string;
   MsgSenderID: number;
+  createdAt: ColumnType<Date, string | undefined, never>; // Auto-generated on insert
+  updatedAt: ColumnType<Date, string | undefined, string | undefined>; // Auto-updated on update
 };
 
 export type GenreTable = {
