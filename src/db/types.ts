@@ -9,7 +9,7 @@ export type messageTables = {
   messageID: Generated<number>;
   MsgTitle: string;
   MsgBody: string;
-  
+  MsgSenderID: number;
 };
 
 export type GenreTable = {
