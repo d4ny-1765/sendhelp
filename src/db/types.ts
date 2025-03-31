@@ -30,3 +30,13 @@ export type Topic = {
   topicId: Generated<number>; 
   name: string;
 };
+
+export type RoomTable = {
+  roomId: Generated<number>;
+  hostId: ColumnType<number, number | null, number | null>; // Can be null if host is removed
+  topicId: ColumnType<number, number | null, number | null>; // Can be null if topic is removed
+  name: string;
+  description: string | null;
+  createdAt: ColumnType<Date, string | undefined, never>; // Auto-generated on insert
+  updatedAt: ColumnType<Date, string | undefined, string | undefined>; // Auto-updated on update
+};
