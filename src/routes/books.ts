@@ -3,6 +3,15 @@ import { createBook, getAllBooks, getOneBook } from '../repositories/book.js';
 
 const router = express.Router();
 
+router.get('/users', async (req, res, next) => {
+    try {
+        const users = await getAllUsers();
+        res.json(users);
+    } catch (err) {
+        next(err);
+    }
+});
+
 router.get('/books', async (req, res, next) => {
     try {
         const books = await getAllBooks();
