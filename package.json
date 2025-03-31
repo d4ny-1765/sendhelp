@@ -9,6 +9,7 @@
   "license": "ISC",
   "description": "Final Group Project for ITIS 4166 Network Based App Development",
   "devDependencies": {
+    "@types/express": "^5.0.1",
     "@types/node": "^22.13.13",
     "@types/pg": "^8.11.11",
     "@types/supertest": "^6.0.3",
@@ -16,14 +17,9 @@
   },
   "dependencies": {
     "kysely": "^0.27.6",
-<<<<<<< HEAD
     "pg": "^8.14.1",
     "supertest": "^7.1.0"
-  }
-=======
-    "pg": "^8.14.1"
   },
   "version": "1.0.0",
   "main": "index.js"
->>>>>>> 4611b9555d9ac11615a2939c569ee978aeb01d77
 }
