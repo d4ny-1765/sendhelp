@@ -1,6 +1,6 @@
 import test, { describe } from "node:test";
 import supertest from 'supertest';
-import { app } from "../src/index.js";
+import { app } from "../index.js";
 import assert from "node:assert/strict";
 
 const request = supertest(app);
