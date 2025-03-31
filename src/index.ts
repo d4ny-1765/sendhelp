@@ -1,6 +1,6 @@
 import express from 'express';
 import { migrateToLatest } from "./db/migrate.js";
-import bookRouter from './routes/books.js';
+import bookRouter from './routes/users.js';
 
 await migrateToLatest();
 
