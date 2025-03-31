@@ -20,7 +20,7 @@ export type GenreTable = {
   bookId: ColumnType<number, number, undefined>; // Insert as number, but no updates
 }
 
-export type User = {
+export type UserTable = {
   userId: Generated<number>; 
   name: string | null; 
   email: string | null;
@@ -28,7 +28,7 @@ export type User = {
   avatar: string | null;
 };
 
-export type Topic = {
+export type TopicTable = {
   topicId: Generated<number>; 
   name: string;
 };
