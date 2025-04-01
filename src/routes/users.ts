@@ -1,5 +1,5 @@
 import express from 'express';
-import { createBook, getAllBooks, getOneBook } from '../repositories/book.js';
+import { createUser, getAllUsers, getUserById } from '../repositories/user.js';
 
 const router = express.Router();
 
@@ -14,7 +14,7 @@ router.get('/users', async (req, res, next) => {
 
 router.get('/users/:userId', async (req, res, next) => {
     try {
-        const user = await getOneUser(+req.params.userId);
+        const user = await getUserById(+req.params.userId);
         res.json(user);
     } catch (err) {
         next(err);

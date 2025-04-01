@@ -1,5 +1,5 @@
 import express from 'express';
-import { createBook, getAllBooks, getOneBook } from '../repositories/book.js';
+import { createBook, getAllBooks, getOneBook } from '../repositories/user.js';
 
 const router = express.Router();
 

@@ -3,6 +3,9 @@ import { ColumnType, Generated } from "kysely";
 export type Database = {
   book: messageTable;
   genre: GenreTable;
+  user: UserTable;
+  topic: TopicTable;
+  room: RoomTable;
 };
 
 export type messageTable = {
