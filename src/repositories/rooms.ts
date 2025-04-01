@@ -42,12 +42,13 @@ export async function createRoom(room: Omit<Room, "roomId" | "createdAt" | "upda
     });
     return insertedRoom;
 }
+export type RoomUpdate = Partial<Pick<Room, "hostId" | "topicId" | "name" | "description">>;
 
 // Update a room
-export async function updateRoom(roomId: number, updates: Partial<Omit<Room, "roomId" | "createdAt">>): Promise<Room> {
+export async function updateRoom(roomId: number, updates: RoomUpdate): Promise<Room> {
     return await db
         .updateTable("room")
-        .set(updates)
+        .set({ ...updates })  // Ensure updates only contains known properties
         .where("roomId", "=", roomId)
         .returning(["roomId", "hostId", "topicId", "name", "description", "createdAt", "updatedAt"])
         .executeTakeFirstOrThrow();
