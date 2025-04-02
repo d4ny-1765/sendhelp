@@ -1,5 +1,5 @@
 import express from 'express';
-import { createUser, getAllUsers, getUserById } from '../repositories/user.js';
+import { createUser, getAllUsers, getUserById, updateUser, deleteUser } from '../repositories/user.js';
 
 const router = express.Router();
 
@@ -30,5 +30,22 @@ router.post('/users', async (req, res, next) => {
     }
 });
 
+router.put('/users/:userId', async (req, res, next) => {
+    try {
+        const user = await updateUser({ userId: +req.params.userId, ...req.body });
+        res.json(user);
+    } catch (err) {
+        next(err);
+    }
+});
+
+router.delete('/users/:userId', async (req, res, next) => {
+    try {
+        const user = await deleteUser(+req.params.userId);
+        res.json(user);
+    } catch (err) {
+        next(err);
+    }
+});
 
 export default router;

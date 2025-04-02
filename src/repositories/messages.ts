@@ -41,3 +41,27 @@ export async function createMessage(message: Omit<Message, 'messageID'>): Promis
         messageID: messageId,
     };
 }
+
+export async function updateMessage(message: Message): Promise<Message> {
+    const { messageID, title, body, senderID, createdAt, updatedAt } = message;
+    const updatedMessage = await db.transaction().execute(async (trx) => {
+        const result = await trx
+            .updateTable('message')
+            .set({ title, body, senderID })
+            .where('messageID', '=', messageID)
+            .returning(['messageID', 'title', 'body', 'senderID', 'createdAt', 'updatedAt'])
+            .executeTakeFirstOrThrow();
+        return result;
+    });
+    return updatedMessage;
+}
+
+export async function deleteMessage(messageId: number): Promise<Message> {
+    const deletedMessage = await db
+        .deleteFrom('message')
+        .where('messageID', '=', messageId)
+        .returning(['messageID', 'title', 'body', 'senderID', 'createdAt', 'updatedAt'])
+        .executeTakeFirstOrThrow();
+    return deletedMessage;
+}
+

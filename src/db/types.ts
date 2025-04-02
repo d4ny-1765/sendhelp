@@ -28,6 +28,7 @@ export type UserTable = {
   email: string | null;
   bio: string | null; 
   avatar: string | null;
+  password: string | null;
 };
 
 export type TopicTable = {
