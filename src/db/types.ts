@@ -1,7 +1,6 @@
 import { ColumnType, Generated } from "kysely";
 
 export type Database = {
-  genre: GenreTable;
   user: UserTable;
   topic: TopicTable;
   room: RoomTable;
@@ -16,11 +15,6 @@ export type messageTable = {
   createdAt: ColumnType<Date, string | undefined, never>; // Auto-generated on insert
   updatedAt: ColumnType<Date, string | undefined, string | undefined>; // Auto-updated on update
 };
-
-export type GenreTable = {
-  genreId: Generated<number>;
-  genreName: string;
-}
 
 export type UserTable = {
   userId: Generated<number>; 
