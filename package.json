@@ -1,25 +1,24 @@
 {
-  "name": "complainit",
+  "name": "scratchpad",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "tsx ./src/index.ts",
+    "test": "tsx ./tests/setup.ts && APP_ENV=test tsx --test --test-force-exit './tests/**/*.test.ts'"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "Final Group Project for ITIS 4166 Network Based App Development",
   "devDependencies": {
-    "@types/express": "^5.0.1",
-    "@types/node": "^22.13.13",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.13.1",
     "@types/pg": "^8.11.11",
-    "@types/supertest": "^6.0.3",
-    "typescript": "^5.8.2"
+    "@types/supertest": "^6.0.2",
+    "supertest": "^7.0.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
   },
   "dependencies": {
-    "kysely": "^0.27.6",
-    "pg": "^8.14.1",
-    "supertest": "^7.1.0"
-  },
-  "version": "1.0.0",
-  "main": "index.js"
+    "express": "^4.21.2",
+    "kysely": "^0.27.5",
+    "pg": "^8.13.1"
+  }
 }
+
+
