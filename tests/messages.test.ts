@@ -61,6 +61,12 @@ describe('Message routes', () => {
     });
 
     test('PUT /messages/:messageId updates a message', async () => {
+        const newMessage = { content: 'Original message' };
+        const createRes = await request
+            .post('/api/v1/messages')
+            .send(newMessage);
+        const createdMessage = createRes.body;
+        
         const updates = { content: 'Updated message' };
         const res = await request
             .put(`/api/v1/messages/${createdMessage.id}`)
@@ -70,6 +76,12 @@ describe('Message routes', () => {
     });
 
     test('DELETE /messages/:messageId deletes a message', async () => {
+        const newMessage = { content: 'Original message' };
+        const createRes = await request
+            .post('/api/v1/messages')
+            .send(newMessage);
+        const createdMessage = createRes.body;
+
         const res = await request.delete(`/api/v1/messages/${createdMessage.id}`);
         assert.equal(res.status, 204);
 
