@@ -14,50 +14,53 @@ describe('Message routes', () => {
 
     test('GET /messages returns an array of messages', async () => {
         await request.post('/api/v1/messages').send({
-            content: 'Test message',
-            userId: 1,
-            bookId: 1
+            title: 'Test message',
+            senderID: 1,
+            createdAt: new Date(),
+            updatedAt: new Date()
         });
         const res = await request.get('/api/v1/messages').send();
         assert.equal(res.status, 200);
-        assert.ok(typeof res.body[0].id === 'number');
-        delete res.body[0].id;
+        assert.ok(typeof res.body[0].messageID === 'number');
+        delete res.body[0].messageID;
         assert.deepEqual(res.body, [{
-            content: 'Test message',
-            userId: 1,
-            bookId: 1
+            title: 'Test message',
+            senderID: 1,
+            createdAt: new Date(),
+            updatedAt: new Date()
         }]);
     });
 
     test('GET /messages/:messageId returns a message', async () => {
         const res = await request.get('/api/v1/messages/1').send();
         assert.equal(res.status, 200);
-        assert.ok(typeof res.body.id === 'number');
-        delete res.body.id;
+        assert.ok(typeof res.body.messageID === 'number');
+        delete res.body.messageID;
         assert.deepEqual(res.body, {
-            content: 'Test message',
-            userId: 1,
-            bookId: 1
+            title: 'Test message',
+            senderID: 1,
+            createdAt: new Date(),
+            updatedAt: new Date()
         });
     });
 
     test('POST /messages creates a message', async () => {
         const newMessage = {
-            content: 'Test message',
-            userId: 1,
-            bookId: 1
+            title: 'Test message',
+            senderID: 1,
+            createdAt: new Date(),
+            updatedAt: new Date()
         };
 
         const res = await request.post('/api/v1/messages').send(newMessage);
         assert.equal(res.status, 201);
 
-        const message: Message = res.body;
-        assert.ok(message.id);
-        assert.equal(message.content, newMessage.content);
-        assert.equal(message.userId, newMessage.userId);
-        assert.equal(message.bookId, newMessage.bookId);
-
-        createdMessage = message;
+        const message = res.body;
+        assert.ok(message.messageID);
+        assert.equal(message.title, newMessage.title);
+        assert.equal(message.senderID, newMessage.senderID);
+        assert.equal(message.createdAt, newMessage.createdAt);
+        assert.equal(message.updatedAt, newMessage.updatedAt);
     });
 
     test('PUT /messages/:messageId updates a message', async () => {
