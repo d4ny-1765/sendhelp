@@ -3,7 +3,7 @@
   "type": "module",
   "scripts": {
     "start": "tsx ./src/index.ts",
-    "test": "tsx ./tests/setup.ts && APP_ENV=test tsx --test --test-force-exit './tests/**/*.test.ts'"
+    "test": "tsx ./tests/setup.ts && APP_ENV=test tsx --test --test-force-exit ./tests/*.test.ts"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
