@@ -15,7 +15,18 @@ export async function up(db: Kysely<Database>): Promise<void> {
         .addForeignKeyConstraint('message_senderID_fkey', ['senderID'], 'user', ['userId'])
         .execute();
 }
+
 export async function down(db: Kysely<Database>): Promise<void> {
-  await db.schema.dropTable('room').execute();
-  await db.schema.dropTable('message').execute();
+    await db.schema
+        .alterTable('room')
+        .dropConstraint('room_hostID_fkey')
+        .execute();
+    await db.schema
+        .alterTable('room')
+        .dropConstraint('room_topicID_fkey')
+        .execute();
+    await db.schema
+        .alterTable('message')
+        .dropConstraint('message_senderID_fkey')
+        .execute();
 }
