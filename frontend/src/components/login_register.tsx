@@ -98,49 +98,57 @@ export default function LoginRegister() {
                 </Grid>
               </Grid>
             )}
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus={isLogin}
-              value={formData.email}
-              onChange={handleChange}
-              error={errors.email}
-              helperText={errors.email ? 'Please enter a valid email' : ''}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              value={formData.password}
-              onChange={handleChange}
-              error={errors.password}
-              helperText={errors.password ? 'Password must be at least 6 characters' : ''}
-            />
-            {!isLogin && (
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="confirmPassword"
-                label="Confirm Password"
-                type="password"
-                id="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                error={errors.confirmPassword}
-                helperText={errors.confirmPassword ? 'Passwords do not match' : ''}
-              />
-            )}
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  autoComplete="email"
+                  autoFocus={isLogin}
+                  value={formData.email}
+                  onChange={handleChange}
+                  error={errors.email}
+                  helperText={errors.email ? 'Please enter a valid email' : ''}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  autoComplete="current-password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  error={errors.password}
+                  helperText={errors.password ? 'Password must be at least 6 characters' : ''}
+                />
+              </Grid>
+              {!isLogin && (
+                <Grid item xs={12}>
+                  <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    name="confirmPassword"
+                    label="Confirm Password"
+                    type="password"
+                    id="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    error={errors.confirmPassword}
+                    helperText={errors.confirmPassword ? 'Passwords do not match' : ''}
+                  />
+                </Grid>
+              )}
+            </Grid>
             <Button
               type="submit"
               fullWidth
