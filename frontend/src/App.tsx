@@ -1,15 +1,18 @@
-import { JSX } from "react";
-import Navbar from "./components/navbar";
-import { Container } from "@mui/material";
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Navbar from './components/navbar';
+import Home from './components/home';
 
-function App(): JSX.Element {
-  return (
-    <>
-      <Container sx={{ mt: 2 }}>
-          <Navbar />
-      </Container>
-    </>
-  )
-}
 
-export default App
+const App: React.FC = () => (
+  <BrowserRouter>
+    <Navbar />
+    <Routes>
+      <Route path="/" element={<Home />} />
+      {/* <Route path="/about" element={<About />} /> */}
+      {/* <Route path="/contact" element={<Contact />} /> */}
+    </Routes>
+  </BrowserRouter>
+);
+
+export default App;
