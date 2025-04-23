@@ -30,11 +30,11 @@ const Rooms: React.FC = () => (
           <Stack direction="row" spacing={2} alignItems="center">
             <Avatar src={`/avatars/${r.host}.png`} /> {/* or initials */}
             <Box flexGrow={1}>
-              <Typography variant="caption">Host {r.host}</Typography>
-              <Typography variant="h6">{r.title}</Typography>
+              <Typography sx={{ fontFamily: 'Inter' }} variant="caption">Host {r.host}</Typography>
+              <Typography sx={{ fontFamily: 'Inter' }} variant="h6">{r.title}</Typography>
               <Stack direction="row" spacing={1} mt={1} alignItems="center">
                 <Avatar sx={{ width: 24, height: 24 }} /> {/* joined avatars */}
-                <Typography variant="body2">{r.joined} Joined</Typography>
+                <Typography sx={{ fontFamily: 'Inter' }} variant="body2">{r.joined} Joined</Typography>
               </Stack>
             </Box>
             <Button size="small" variant="outlined">{r.tag}</Button>
