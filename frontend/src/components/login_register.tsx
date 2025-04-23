@@ -8,9 +8,9 @@ import {
   Link, 
   Container,
   Avatar,
-  CssBaseline,
-  Grid
+  CssBaseline
 } from '@mui/material';
+import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
@@ -71,9 +71,8 @@ export default function LoginRegister() {
           <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
             {!isLogin && (
               <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <TextField
-                    autoComplete="given-name"
                     name="firstName"
                     required
                     fullWidth
@@ -84,7 +83,7 @@ export default function LoginRegister() {
                     onChange={handleChange}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <TextField
                     required
                     fullWidth
@@ -99,7 +98,7 @@ export default function LoginRegister() {
               </Grid>
             )}
             <Grid container spacing={2}>
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <TextField
                   margin="normal"
                   required
@@ -115,7 +114,7 @@ export default function LoginRegister() {
                   helperText={errors.email ? 'Please enter a valid email' : ''}
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <TextField
                   margin="normal"
                   required
@@ -132,7 +131,7 @@ export default function LoginRegister() {
                 />
               </Grid>
               {!isLogin && (
-                <Grid item xs={12}>
+                <Grid size={{ xs: 12 }}>
                   <TextField
                     margin="normal"
                     required
@@ -158,7 +157,7 @@ export default function LoginRegister() {
               {isLogin ? 'Sign In' : 'Sign Up'}
             </Button>
             <Grid container justifyContent="flex-end">
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <Link 
                   href="#" 
                   variant="body2" 
