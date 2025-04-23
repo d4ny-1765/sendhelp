@@ -1,6 +1,17 @@
 import React from 'react';
 import { Box, Typography, Card, CardContent, Avatar, Stack, Button } from '@mui/material';
 
+
+// Testing connecting it to backend
+
+type Props = {
+  room: Room;
+  onUpdateTodo: (updatedTodo: Room) => void;
+  onDeleteTodo: (deletedTodo: Room) => void;
+};
+
+// End testing
+
 const rooms = [
   { host: '@praveen', title: 'Study Bud Chat', joined: 3, tag: 'Python' },
   { host: '@dennisivy', title: 'Who wants to learn python?', joined: 1, tag: 'Python' },
