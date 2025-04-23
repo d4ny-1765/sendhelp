@@ -26,7 +26,7 @@ const Rooms: React.FC = () => (
     </Stack>
     {rooms.map(r => (
       <Card key={r.title} sx={{ mb: 2, bgcolor: 'grey.800', color: 'grey.100' }}>
-        <CardContent sx={{ backgroundColor: 'grey.900', borderRadius: 2, boxShadow: 3, p: 3 }}>
+        <CardContent sx={{ backgroundColor: '#daddd8', borderRadius: 2, boxShadow: 3, p: 3 }}>
           <Stack direction="row" spacing={2} alignItems="center">
             <Avatar src={`/avatars/${r.host}.png`} /> {/* or initials */}
             <Box flexGrow={1}>
