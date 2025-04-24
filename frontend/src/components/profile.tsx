@@ -114,14 +114,14 @@ export default function ProfilePage() {
               </>
             ) : (
               <>
-                <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
+                <Typography sx={{ fontFamily: 'Inter' }} variant="h6" gutterBottom sx={{ mt: 2 }}>
                   {profile.firstName} {profile.lastName}
                 </Typography>
-                <Typography variant="body1" gutterBottom>
+                <Typography sx={{ fontFamily: 'Inter' }} variant="body1" gutterBottom>
                   {profile.email}
                 </Typography>
                 <Divider sx={{ my: 2 }} />
-                <Typography variant="body1">
+                <Typography sx={{ fontFamily: 'Inter' }} variant="body1">
                   {profile.bio}
                 </Typography>
                 <Button
