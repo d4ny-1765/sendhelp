@@ -7,7 +7,7 @@ import { Link as RouterLink } from 'react-router-dom';
 
 const Navbar: React.FC = () => {
   return (
-    <AppBar position="static">
+    <AppBar position="static" sx={{ backgroundColor: '#04a777' }}>
       <Toolbar>
         {/* Site title / logo */}
         <Typography

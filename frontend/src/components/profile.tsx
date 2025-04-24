@@ -48,13 +48,13 @@ export default function ProfilePage() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Container component="main" maxWidth="sm">
+      <Container sx={{ backgroundColor: '#daddd8', borderRadius: 2, boxShadow: 3, p: 3 }} component="main" maxWidth="sm">
         <CssBaseline />
         <Paper elevation={3} sx={{ mt: 4, p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <Avatar sx={{ m: 1, bgcolor: 'secondary.main', width: 80, height: 80 }}>
             <PersonIcon fontSize="large" />
           </Avatar>
-          <Typography component="h1" variant="h5">
+          <Typography sx={{ fontFamily: 'Inter' }} component="h1" variant="h5">
             User Profile
           </Typography>
           
@@ -114,14 +114,14 @@ export default function ProfilePage() {
               </>
             ) : (
               <>
-                <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
+                <Typography sx={{ fontFamily: 'Inter' }} variant="h6" gutterBottom sx={{ mt: 2 }}>
                   {profile.firstName} {profile.lastName}
                 </Typography>
-                <Typography variant="body1" gutterBottom>
+                <Typography sx={{ fontFamily: 'Inter' }} variant="body1" gutterBottom>
                   {profile.email}
                 </Typography>
                 <Divider sx={{ my: 2 }} />
-                <Typography variant="body1">
+                <Typography sx={{ fontFamily: 'Inter' }} variant="body1">
                   {profile.bio}
                 </Typography>
                 <Button
