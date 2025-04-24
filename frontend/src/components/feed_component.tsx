@@ -1,26 +1,55 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Typography, Card, CardContent, Avatar, Button, Stack } from '@mui/material';
 
-const hosts = ['Praveen Kumar','Dennis Ivanov','Gary Simon'];
+interface Host { userId: number; name: string | null; avatar?: string | null; }
+interface Activity { messageID: number; title: string; body: string; senderID: number; createdAt: string; }
 
-const Sidebar: React.FC = () => (
-  <Box>
-    <Typography variant="subtitle1" gutterBottom>Top Hosts</Typography>
-    {hosts.map(name => (
-      <Card key={name} sx={{ mb: 1, bgcolor: 'grey.800', color: 'grey.100' }}>
-        <CardContent sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Stack direction="row" spacing={2} alignItems="center">
-            <Avatar /> 
-            <Typography>{name}</Typography>
-          </Stack>
-          <Button size="small" variant="outlined">Follow</Button>
-        </CardContent>
-      </Card>
-    ))}
+const Sidebar: React.FC = () => {
+  const [hosts, setHosts] = useState<Host[]>([]);
+  const [activities, setActivities] = useState<Activity[]>([]);
 
-    <Typography variant="subtitle1" gutterBottom sx={{ mt: 3 }}>Recent Activities</Typography>
-    {/* Repeat similar cards for activity… */}
-  </Box>
-);
+  useEffect(() => {
+    fetch('/api/v1/users')
+      .then(res => res.json())
+      .then(data => setHosts(data))
+      .catch(console.error);
+    fetch('/api/v1/messages')
+      .then(res => res.json())
+      .then(data => setActivities(data))
+      .catch(console.error);
+  }, []);
+
+  return (
+    <Box>
+      <Typography variant="subtitle1" gutterBottom>Top Hosts</Typography>
+      {hosts.slice(0, 5).map(host => (
+        <Card key={host.userId} sx={{ mb: 1, bgcolor: 'grey.800', color: 'grey.100' }}>
+          <CardContent sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Stack direction="row" spacing={2} alignItems="center">
+              <Avatar src={host.avatar || undefined}>
+                {!host.avatar && host.name?.charAt(0)}
+              </Avatar>
+              <Typography>{host.name}</Typography>
+            </Stack>
+            <Button size="small" variant="outlined" onClick={() => console.log('Follow', host.userId)}>Follow</Button>
+          </CardContent>
+        </Card>
+      ))}
+
+      <Typography variant="subtitle1" gutterBottom sx={{ mt: 3 }}>Recent Activities</Typography>
+      {activities.slice(0, 5).map(act => (
+        <Card key={act.messageID} sx={{ mb: 1 }}>
+          <CardContent>
+            <Typography variant="subtitle2">{act.title}</Typography>
+            <Typography variant="body2" sx={{ mt: 1 }}>{act.body}</Typography>
+            <Typography variant="caption" color="text.secondary" sx={{ mt: 1 }}>
+              {new Date(act.createdAt).toLocaleString()}
+            </Typography>
+          </CardContent>
+        </Card>
+      ))}
+    </Box>
+  );
+};
 
 export default Sidebar;

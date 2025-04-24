@@ -10,13 +10,13 @@ const Home: React.FC = () => {
   return (
     <Container maxWidth="md" sx={{ mt: 4 }}>
       <Grid container spacing={2}>
-        <Grid size={{ xs: 12, sm: 6 }}>
+        <Grid size={{ xs: 12, sm: 4 }}>
           <Topics />
         </Grid>
-        <Grid size={{ xs: 12, sm: 6 }}>
+        <Grid size={{ xs: 12, sm: 4 }}>
           <Rooms />
         </Grid>
-        <Grid size={{ xs: 12, sm: 6 }}>
+        <Grid size={{ xs: 12, sm: 4 }}>
           <Sidebar />
         </Grid>
       </Grid>

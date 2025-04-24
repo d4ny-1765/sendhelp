@@ -1,48 +1,53 @@
-import React from 'react';
-import { Box, Typography, Card, CardContent, Avatar, Stack, Button } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Typography, Card, CardContent, Avatar, Button, Stack } from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
 
+interface RoomType {
+  roomId: number;
+  hostId: number | null;
+  topicId: number | null;
+  name: string;
+  description: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
 
-// Testing connecting it to backend
+const Rooms: React.FC = () => {
+  const [rooms, setRooms] = useState<RoomType[]>([]);
 
-type Props = {
-  room: Room;
-  onUpdateTodo: (updatedTodo: Room) => void;
-  onDeleteTodo: (deletedTodo: Room) => void;
+  useEffect(() => {
+    fetch('/api/v1/rooms')
+      .then(res => res.json())
+      .then(data => setRooms(data))
+      .catch(console.error);
+  }, []);
+
+  return (
+    <Box>
+      <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
+        <Typography variant="h6">Rooms</Typography>
+        <Button component={RouterLink} to="/room_form" variant="contained">+ Create Room</Button>
+      </Stack>
+      {rooms.map(r => (
+        <Card key={r.roomId} sx={{ mb: 2, bgcolor: 'grey.800', color: 'grey.100' }}>
+          <CardContent>
+            <Stack direction="row" spacing={2} alignItems="center">
+              <Avatar src={`/avatars/${r.hostId}.png`} />
+              <Box flexGrow={1}>
+                <Typography variant="caption">Host {r.hostId}</Typography>
+                <Typography variant="h6">{r.name}</Typography>
+                {r.description && <Typography variant="body2">{r.description}</Typography>}
+                <Typography variant="caption" color="text.secondary">
+                  {new Date(r.createdAt).toLocaleString()}
+                </Typography>
+              </Box>
+              <Button size="small" variant="outlined">Join</Button>
+            </Stack>
+          </CardContent>
+        </Card>
+      ))}
+    </Box>
+  );
 };
-
-// End testing
-
-const rooms = [
-  { host: '@praveen', title: 'Study Bud Chat', joined: 3, tag: 'Python' },
-  { host: '@dennisivy', title: 'Who wants to learn python?', joined: 1, tag: 'Python' },
-  { host: '@garysimon', title: 'Lets talk about HTML', joined: 2, tag: 'HTML' },
-];
-
-const Rooms: React.FC = () => (
-  <Box>
-    <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
-      <Typography variant="h6">Rooms</Typography>
-      <Button variant="contained">+ Create Room</Button>
-    </Stack>
-    {rooms.map(r => (
-      <Card key={r.title} sx={{ mb: 2, bgcolor: 'grey.800', color: 'grey.100' }}>
-        <CardContent sx={{ backgroundColor: 'grey.900', borderRadius: 2, boxShadow: 3, p: 3 }}>
-          <Stack direction="row" spacing={2} alignItems="center">
-            <Avatar src={`/avatars/${r.host}.png`} /> {/* or initials */}
-            <Box flexGrow={1}>
-              <Typography variant="caption">Host {r.host}</Typography>
-              <Typography variant="h6">{r.title}</Typography>
-              <Stack direction="row" spacing={1} mt={1} alignItems="center">
-                <Avatar sx={{ width: 24, height: 24 }} /> {/* joined avatars */}
-                <Typography variant="body2">{r.joined} Joined</Typography>
-              </Stack>
-            </Box>
-            <Button size="small" variant="outlined">{r.tag}</Button>
-          </Stack>
-        </CardContent>
-      </Card>
-    ))}
-  </Box>
-);
 
 export default Rooms;
