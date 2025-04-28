@@ -6,6 +6,7 @@ import Button from '@mui/material/Button';
 import { Link as RouterLink } from 'react-router-dom';
 import { Avatar, IconButton } from '@mui/material';
 import userIcon from '../assets/user.png';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 
 const Navbar: React.FC = () => {
   return (
@@ -26,6 +27,14 @@ const Navbar: React.FC = () => {
         </Typography>
 
         {/* Navigation buttons */}
+        <IconButton
+  component={RouterLink}
+  to="/notifications" // Or wherever you want to link
+  color="inherit"
+  sx={{ ml: 1 }}
+>
+  <NotificationsIcon />
+</IconButton>
         <IconButton component={RouterLink} to="/profile" sx={{ p: 0, ml: 2 }}>
   <Avatar
     src={userIcon}
@@ -44,3 +53,5 @@ const Navbar: React.FC = () => {
 };
 
 export default Navbar;
+
+/*  profile icon by Freepik - Flaticon*/
