@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Card, CardContent, Avatar, Button, Stack } from '@mui/material';
+import { Box, Typography, Card, CardContent, Button, Stack } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 
 interface RoomType {
@@ -29,20 +29,16 @@ const Rooms: React.FC = () => {
         <Button component={RouterLink} to="/room_form" variant="contained">+ Create Room</Button>
       </Stack>
       {rooms.map(r => (
-        <Card key={r.roomId} sx={{ mb: 2, bgcolor: 'grey.800', color: 'grey.100' }}>
+        <Card
+          key={r.roomId}
+          component={RouterLink}
+          to={`/rooms/${r.roomId}`}
+          sx={{ mb: 2, textDecoration: 'none', bgcolor: 'grey.800', color: 'grey.100' }}
+        >
           <CardContent>
-            <Stack direction="row" spacing={2} alignItems="center">
-              <Avatar src={`/avatars/${r.hostId}.png`} />
-              <Box flexGrow={1}>
-                <Typography variant="caption">Host {r.hostId}</Typography>
-                <Typography variant="h6">{r.name}</Typography>
-                {r.description && <Typography variant="body2">{r.description}</Typography>}
-                <Typography variant="caption" color="text.secondary">
-                  {new Date(r.createdAt).toLocaleString()}
-                </Typography>
-              </Box>
-              <Button size="small" variant="outlined">Join</Button>
-            </Stack>
+            <Typography variant="caption">Host {r.hostId}</Typography>
+            <Typography variant="h6" gutterBottom>{r.name}</Typography>
+            {r.description && <Typography variant="body2">{r.description}</Typography>}
           </CardContent>
         </Card>
       ))}

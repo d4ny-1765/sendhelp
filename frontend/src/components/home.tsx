@@ -8,7 +8,7 @@ import Sidebar from './feed_component';
 
 const Home: React.FC = () => {
   return (
-    <Container sx={{ backgroundColor: '#daddd8', borderRadius: 2, boxShadow: 3, p: 3 }} maxWidth="md" sx={{ mt: 4 }}>
+    <Container sx={{ backgroundColor: '#daddd8', borderRadius: 2, boxShadow: 3, p: 3 }} maxWidth="md">
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, sm: 4 }}>
           <Topics />

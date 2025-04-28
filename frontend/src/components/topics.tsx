@@ -1,32 +1,41 @@
-import React from 'react';
-import { Box, List, ListItem, ListItemText, Button, Typography } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Typography, List, ListItem, ListItemText } from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
 
-const topics = [
-  { name: 'All', count: 9 },
-  { name: 'Python', count: 2 },
-  { name: 'HTML', count: 0 },
-  // …add yours
-];
+interface Topic {
+  topicId: number;
+  name: string;
+}
 
-const Topics: React.FC = () => (
-  <Box>
-    <Typography variant="subtitle1" gutterBottom>Browse Topics</Typography>
-    <List disablePadding>
-      {topics.map(t => (
-        <ListItem
-          key={t.name}
-          secondaryAction={
-            <Button size="small" variant="outlined">Follow</Button>
-          }
-        >
-          <ListItemText
-            primary={t.name}
-            secondary={t.count > 0 ? `(${t.count})` : null}
-          />
-        </ListItem>
-      ))}
-    </List>
-  </Box>
-);
+const Topics: React.FC = () => {
+  const [topics, setTopics] = useState<Topic[]>([]);
+
+  useEffect(() => {
+    fetch('/api/v1/topics')
+      .then(res => res.json())
+      .then(data => setTopics(data))
+      .catch(console.error);
+  }, []);
+
+  return (
+    <Box>
+      <Typography variant="subtitle1" gutterBottom>
+        Browse Topics
+      </Typography>
+      <List disablePadding>
+        {topics.map(topic => (
+          <ListItem
+            key={topic.topicId}
+            component={RouterLink}
+            to={`/rooms?topicId=${topic.topicId}`}
+            sx={{ px: 0 }}
+          >
+            <ListItemText primary={topic.name} />
+          </ListItem>
+        ))}
+      </List>
+    </Box>
+  );
+};
 
 export default Topics;
