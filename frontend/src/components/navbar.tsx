@@ -1,14 +1,31 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import { Link as RouterLink } from 'react-router-dom';
-import { Avatar, IconButton, TextField, InputAdornment, Box } from '@mui/material';
+import {
+  Avatar,
+  IconButton,
+  TextField,
+  InputAdornment,
+  Box,
+  Menu,
+  MenuItem,
+  ListItemText,
+} from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import SearchIcon from '@mui/icons-material/Search';
 import userIcon from '../assets/user.png';
+
+interface Notification {
+  id: number;
+  type: 'new_post' | 'comment';
+  section?: string;
+  postTitle?: string;
+  roomId?: string;
+  commentText?: string;
+}
 
 const Navbar: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -20,6 +37,40 @@ const Navbar: React.FC = () => {
       navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleNotificationsClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleNotificationsClose = () => {
+    setAnchorEl(null);
+  };
+
+  // Sample notifications (replace with backend call)
+  const [notifications, setNotifications] = useState<Notification[]>([
+    {
+      id: 1,
+      type: 'new_post',
+      section: 'Python',
+      postTitle: 'How do I use decorators?',
+      roomId: 'python-123',
+    },
+    {
+      id: 2,
+      type: 'comment',
+      postTitle: 'Best way to handle promises in JS?',
+      roomId: 'js-456',
+      commentText: 'You could use async/await instead...',
+    },
+  ]);
+
+  // Future hook to fetch real notifications
+  // useEffect(() => {
+  //   fetch('/api/notifications')
+  //     .then((res) => res.json())
+  //     .then(setNotifications);
+  // }, []);
 
   return (
     <AppBar position="static" sx={{ backgroundColor: '#04a777' }}>
@@ -61,16 +112,40 @@ const Navbar: React.FC = () => {
           />
         </Box>
 
-        {/* Right: Icons and Login */}
+        {/* Right: Notifications, Profile, Login */}
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <IconButton
-            component={RouterLink}
-            to="/notifications"
-            color="inherit"
-            sx={{ ml: 1 }}
-          >
+          <IconButton onClick={handleNotificationsClick} color="inherit" sx={{ ml: 1 }}>
             <NotificationsIcon />
           </IconButton>
+          <Menu
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleNotificationsClose}
+            MenuListProps={{
+              'aria-labelledby': 'notifications-button',
+            }}
+          >
+            {notifications.length > 0 ? (
+              notifications.map((note) => {
+                const link = `/room/${note.roomId}`;
+                let text = '';
+
+                if (note.type === 'new_post') {
+                  text = `New post in ${note.section}: "${note.postTitle}"`;
+                } else if (note.type === 'comment') {
+                  text = `New comment on your post: "${note.commentText}"`;
+                }
+
+                return (
+                  <MenuItem key={note.id} component={RouterLink} to={link} onClick={handleNotificationsClose}>
+                    <ListItemText primary={text} />
+                  </MenuItem>
+                );
+              })
+            ) : (
+              <MenuItem disabled>No new notifications</MenuItem>
+            )}
+          </Menu>
 
           <IconButton component={RouterLink} to="/profile" sx={{ p: 0, ml: 2 }}>
             <Avatar
@@ -90,5 +165,3 @@ const Navbar: React.FC = () => {
 };
 
 export default Navbar;
-
-/* profile icon by Freepik - Flaticon */
