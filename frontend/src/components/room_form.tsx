@@ -2,10 +2,16 @@
 
 import React, { useState, useEffect } from 'react';
 import { Box, TextField, Button, Stack, Typography, Autocomplete } from '@mui/material';
+import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 interface Topic { topicId: number; name: string; }
 
 const RoomForm: React.FC = () => {
+  const { auth } = useAuth();
+  const navigate = useNavigate();
+  if (!auth) return <Typography>Please login to create a room.</Typography>;
+
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [topics, setTopics] = useState<Topic[]>([]);
@@ -35,15 +41,21 @@ const RoomForm: React.FC = () => {
       } else {
         console.error('Topic is required'); return;
       }
+      console.log('Auth header being sent:', `Bearer ${auth.token}`);
       const res = await fetch('/api/v1/rooms', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, description, hostId: 1, topicId: finalTopicId }),
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${auth.token}`
+        },
+        body: JSON.stringify({ name, description, topicId: finalTopicId }),
       });
+      console.log('Response status:', res.status);
+      console.log('Response body:', await res.json());
       if (res.ok) {
         setName('');
         setDescription('');
-        console.log('Room created');
+        navigate('/');
       } else {
         console.error('Create failed');
       }

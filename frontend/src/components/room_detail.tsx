@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link as RouterLink } from 'react-router-dom';
+import { useParams, Link as RouterLink, useNavigate } from 'react-router-dom';
 import { Box, Typography, Button, Stack } from '@mui/material';
 
 interface RoomType {
@@ -15,6 +15,7 @@ interface RoomType {
 const RoomDetail: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
   const [room, setRoom] = useState<RoomType | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!roomId) return;
@@ -40,6 +41,17 @@ const RoomDetail: React.FC = () => {
         <Button component={RouterLink} to="/" variant="outlined">
           Back to Rooms
         </Button>
+        <Stack direction="row" spacing={1}>
+          <Button variant="contained" onClick={() => navigate(`/room_form?roomId=${room.roomId}`)}>
+            Edit
+          </Button>
+          <Button variant="outlined" color="error" onClick={async () => {
+            await fetch(`/api/v1/rooms/${room.roomId}`, { method: 'DELETE' });
+            navigate('/');
+          }}>
+            Delete
+          </Button>
+        </Stack>
       </Stack>
     </Box>
   );
