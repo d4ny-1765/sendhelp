@@ -1,9 +1,9 @@
 import express from "express";
 import { createRoom, getAllRooms, getRoomById, updateRoom, deleteRoom, getRoomsByTopic } from "../repositories/rooms.js";
 import jwt from 'jsonwebtoken';
-import type { Secret } from 'jsonwebtoken';
-const JWT_SECRET: Secret = process.env.JWT_SECRET!;
 
+const JWT_SECRET = "secret";
+const JWT_EXPIRES_IN = "24h";
 const router = express.Router();
 
 // Get rooms (all or filtered by topic)
@@ -42,6 +42,8 @@ router.post("/rooms", async (req, res, next) => {
     try {
       payload = jwt.verify(token, JWT_SECRET) as jwt.JwtPayload;
     } catch (e) {
+      console.log(token);
+      console.log(JWT_SECRET);
       res.status(401).json({ error: 'Invalid token2' });
       return;
     }

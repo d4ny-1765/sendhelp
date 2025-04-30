@@ -9,11 +9,8 @@ dotenv.config();
 
 const router = Router();
 
-const JWT_SECRET: Secret = process.env.JWT_SECRET!;
-
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN
-  ? parseInt(process.env.JWT_EXPIRES_IN, 10)
-  : undefined;
+const JWT_SECRET = "secret"; 
+const JWT_EXPIRES_IN = "24h";
 
 router.post(
   '/register',
