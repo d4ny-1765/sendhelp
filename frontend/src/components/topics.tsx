@@ -11,10 +11,25 @@ const Topics: React.FC = () => {
   const [topics, setTopics] = useState<Topic[]>([]);
 
   useEffect(() => {
-    fetch('/api/v1/topics')
-      .then(res => res.json())
-      .then(data => setTopics(data))
-      .catch(console.error);
+    async function loadTopics() {
+      try {
+        const topicsData: Topic[] = await fetch('/api/v1/topics').then(res => res.json());
+        const validTopics: Topic[] = [];
+        for (const t of topicsData) {
+          const rooms = await fetch(`/api/v1/rooms?topicId=${t.topicId}`).then(r => r.json());
+          if (rooms.length > 0) {
+            validTopics.push(t);
+          } else {
+            // delete empty topic
+            await fetch(`/api/v1/topics/${t.topicId}`, { method: 'DELETE' });
+          }
+        }
+        setTopics(validTopics);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    loadTopics();
   }, []);
 
   return (
@@ -27,7 +42,7 @@ const Topics: React.FC = () => {
           <ListItem
             key={topic.topicId}
             component={RouterLink}
-            to={`/rooms?topicId=${topic.topicId}`}
+            to={`/?topicId=${topic.topicId}`}
             sx={{ px: 0 }}
           >
             <ListItemText primary={topic.name} />

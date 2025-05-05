@@ -4,17 +4,22 @@ import Navbar from './components/navbar';
 import Home from './components/home';
 import RoomForm from './components/room_form';
 import RoomDetail from './components/room_detail';
-import { ProfilePage } from './components/profile';
+import { AuthProvider } from './contexts/AuthContext';
+import LoginRegister from './components/login_register';
+import { PrivateRoute } from './components/PrivateRoute';
 const App: React.FC = () => (
-  <BrowserRouter>
+  <AuthProvider>
+    <BrowserRouter>
     <Navbar />
     <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/room_form" element={<RoomForm />} />
-      <Route path="/rooms/:roomId" element={<RoomDetail />} />
-      <Route path="/profile" element={<ProfilePage />} />
+    <Route path="/login" element={<LoginRegister />} />
+    <Route path="/register" element={<LoginRegister />} />
+      <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
+      <Route path="/room_form" element={<PrivateRoute><RoomForm /></PrivateRoute>} />
+      <Route path="/rooms/:roomId" element={<PrivateRoute><RoomDetail /></PrivateRoute>} />
     </Routes>
   </BrowserRouter>
+  </AuthProvider>
 );
 
 export default App;
