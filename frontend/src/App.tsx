@@ -7,6 +7,7 @@ import RoomDetail from './components/room_detail';
 import { AuthProvider } from './contexts/AuthContext';
 import LoginRegister from './components/login_register';
 import { PrivateRoute } from './components/PrivateRoute';
+import ProfilePage from './components/profile';
 const App: React.FC = () => (
   <AuthProvider>
     <BrowserRouter>
@@ -17,6 +18,7 @@ const App: React.FC = () => (
       <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
       <Route path="/room_form" element={<PrivateRoute><RoomForm /></PrivateRoute>} />
       <Route path="/rooms/:roomId" element={<PrivateRoute><RoomDetail /></PrivateRoute>} />
+      <Route path='/profile' element={<PrivateRoute><ProfilePage /></PrivateRoute>} />  
     </Routes>
   </BrowserRouter>
   </AuthProvider>

@@ -9,6 +9,7 @@ type Auth = {
 } | null;
 
 interface AuthContextType {
+  userId: number | null;
   auth: Auth;
   login: (auth: NonNullable<Auth>) => void;
   logout: () => void;
@@ -51,7 +52,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ auth, login, logout }}>
+    <AuthContext.Provider value={{ auth, login, logout, userId: auth?.user.userId || null }}>
       {children}
     </AuthContext.Provider>
   );

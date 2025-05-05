@@ -89,27 +89,11 @@ const Navbar: React.FC = () => {
             color: 'inherit',
           }}
         >
-          ComplainIt
+          Stack Rant
         </Typography>
 
-        {/ * Navigation buttons */}
-        {auth ? (
-          <>
-            <IconButton component={RouterLink} to="/profile" sx={{ p: 0, ml: 2 }}>
-              <Avatar
-                src={userIcon}
-                sx={{ width: 36, height: 36 }}
-              />
-            </IconButton>
-            <Button color="inherit" onClick={logout}>
-              Logout
-            </Button>
-          </>
-        ) : (
-          <Button color="inherit" component={RouterLink} to="/login">
-            Login
-          </Button>
-        )}
+        {/* Navigation buttons */}
+        
 
         {/* Center: Search Bar */}
         <Box component="form" onSubmit={handleSearch} sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
@@ -177,10 +161,15 @@ const Navbar: React.FC = () => {
               sx={{ width: 36, height: 36 }}
             />
           </IconButton>
-
-          <Button color="inherit" component={RouterLink} to="/login" sx={{ ml: 2 }}>
-            Login
-          </Button>
+          {auth ? (
+            <Button color="inherit" onClick={logout} sx={{ ml: 2 }}>
+              Logout
+            </Button>
+          ) : (
+            <Button component={RouterLink} to="/login" color="inherit" sx={{ ml: 2 }}>
+              Login
+            </Button>
+          )}
         </Box>
       </Toolbar>
     </AppBar>

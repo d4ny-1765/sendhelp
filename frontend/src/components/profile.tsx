@@ -13,13 +13,12 @@ import {
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import PersonIcon from '@mui/icons-material/Person';
-import { useParams } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext'; 
 
 const defaultTheme = createTheme();
 
 type ProfileData = {
-  firstName: string;
-  lastName: string;
+  name: string;
   email: string;
   bio: string;
   currentPassword?: string;
@@ -28,11 +27,12 @@ type ProfileData = {
 };
 
 export const ProfilePage: React.FC = () => {
-  const { hostId } = useParams<{ hostId: string }>();
+  const { userId } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [showPasswordFields, setShowPasswordFields] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
   const [errors, setErrors] = useState({
     email: false,
     newPassword: false,
@@ -40,12 +40,38 @@ export const ProfilePage: React.FC = () => {
   });
 
   useEffect(() => {
-    if (!hostId) return;
-    fetch(`/api/v1/users/${hostId}`)
-      .then(res => res.json())
-      .then(data => setProfile(data))
-      .catch(console.error);
-  }, [hostId]);
+    const fetchProfile = async () => {
+      if (!userId) return;
+      
+      try {
+        const response = await fetch(`/api/v1/users/${userId}`);
+        console.log('API Response:', response);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('Profile data:', data);
+        
+        // Initialize profile with default values if some fields are missing
+        setProfile({
+          name: data.name || '',
+          email: data.email || '',
+          bio: data.bio || 'No bio available',
+        });
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+        setApiError(error instanceof Error ? error.message : 'Failed to load profile');
+      }
+    };
+
+    fetchProfile();
+  }, [userId]);
+
+  if (apiError) {
+    return <Typography color="error">{apiError}</Typography>;
+  }
 
   if (!profile) {
     return <Typography>Loading profile...</Typography>;
@@ -70,14 +96,39 @@ export const ProfilePage: React.FC = () => {
     return !Object.values(newErrors).some(Boolean);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
-      // TODO: Implement API call to update profile
-      console.log('Profile updated:', profile);
+    if (!validateForm()) return;
+
+    try {
+      const response = await fetch(`/api/v1/users/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: profile.name,
+          email: profile.email,
+          bio: profile.bio,
+          ...(showPasswordFields && {
+            currentPassword: profile.currentPassword,
+            newPassword: profile.newPassword,
+          }),
+        }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to update profile');
+      }
+
+      const updatedProfile = await response.json();
+      setProfile(updatedProfile);
       setSuccess(true);
       setIsEditing(false);
+      setShowPasswordFields(false);
       setTimeout(() => setSuccess(false), 3000);
+    } catch (error) {
+      console.error(error);
+      setApiError('Failed to update profile');
     }
   };
 
@@ -90,8 +141,15 @@ export const ProfilePage: React.FC = () => {
             <PersonIcon fontSize="large" />
           </Avatar>
           <Typography sx={{ fontFamily: 'Inter' }} component="h1" variant="h5">
-            User Profile
+            {profile.name}
+
           </Typography>
+          
+          {apiError && (
+            <Alert severity="error" sx={{ width: '100%', mt: 2 }}>
+              {apiError}
+            </Alert>
+          )}
           
           {success && (
             <Alert severity="success" sx={{ width: '100%', mt: 2 }}>
@@ -107,19 +165,9 @@ export const ProfilePage: React.FC = () => {
                   required
                   fullWidth
                   id="firstName"
-                  label="First Name"
-                  name="firstName"
-                  value={profile.firstName}
-                  onChange={handleChange}
-                />
-                <TextField
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="lastName"
-                  label="Last Name"
-                  name="lastName"
-                  value={profile.lastName}
+                  label="Name"
+                  name="name"
+                  value={profile.name}
                   onChange={handleChange}
                 />
                 <TextField
@@ -209,7 +257,7 @@ export const ProfilePage: React.FC = () => {
             ) : (
               <>
                 <Typography sx={{ fontFamily: 'Inter' }} variant="h6" gutterBottom>
-                  {profile.firstName} {profile.lastName}
+                  {profile.name}
                 </Typography>
                 <Typography sx={{ fontFamily: 'Inter' }} variant="body1" gutterBottom>
                   {profile.email}
@@ -233,4 +281,6 @@ export const ProfilePage: React.FC = () => {
       </Container>
     </ThemeProvider>
   );
-}
+};
+
+export default ProfilePage;
