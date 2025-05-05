@@ -1,5 +1,5 @@
 import { db } from "../db/db.js";
-import { Database } from "../db/types.js";
+import bcrypt from 'bcrypt';
 
 export type User = {
     userId: number;
@@ -60,4 +60,25 @@ export async function deleteUser(userId: number): Promise<User> {
         .returning(['userId', 'name', 'email', 'bio', 'avatar', 'password'])
         .executeTakeFirstOrThrow();
     return deletedUser;
+}
+
+
+export async function findUserByEmail(email: string): Promise<User | undefined> {
+    return await db
+        .selectFrom('user')
+        .selectAll()
+        .where('email', '=', email)
+        .executeTakeFirst();
+}
+
+
+export async function createAuthUser(email: string, password: string, name: string): Promise<User> {
+    const passwordHash = await bcrypt.hash(password, 10);
+    const newUser = await db
+        .insertInto('user')
+        .columns(['email', 'password', 'name'])
+        .values({ email, password: passwordHash, name })
+        .returningAll()
+        .executeTakeFirstOrThrow();
+    return newUser;
 }

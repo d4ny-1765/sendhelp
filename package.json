@@ -6,7 +6,9 @@
     "test": "tsx ./tests/setup.ts && APP_ENV=test tsx --test --test-force-exit ./tests/*.test.ts"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^22.13.1",
     "@types/pg": "^8.11.11",
     "@types/supertest": "^6.0.2",
@@ -15,10 +17,11 @@
     "typescript": "^5.7.3"
   },
   "dependencies": {
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.5.0",
     "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
     "kysely": "^0.27.5",
     "pg": "^8.13.1"
   }
 }
-
-

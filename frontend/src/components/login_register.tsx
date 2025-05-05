@@ -10,6 +10,8 @@ import {
   Avatar,
   CssBaseline
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -18,6 +20,8 @@ const defaultTheme = createTheme();
 
 export default function LoginRegister() {
   const [isLogin, setIsLogin] = useState(true);
+  const { login } = useAuth();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -49,11 +53,38 @@ export default function LoginRegister() {
     return !Object.values(newErrors).some(Boolean);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      console.log('Form submitted:', isLogin ? 'Login' : 'Register', formData);
-      // Add your authentication logic here
+      try {
+        const endpoint = isLogin ? '/api/v1/login' : '/api/v1/register';
+        const body = isLogin
+          ? { email: formData.email, password: formData.password }
+          : { email: formData.email, password: formData.password, firstName: formData.firstName, lastName: formData.lastName };
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+
+        if (!res.ok) throw new Error('Authentication failed');
+
+        const data = await res.json();
+        console.log('Auth response:', data);
+
+        // Ensure we have the required data before calling login
+        if (!data.token || !data.user) {
+          throw new Error('Invalid response from server');
+        }
+
+        login({
+          token: data.token,
+          user: data.user 
+        });
+        navigate('/');
+      } catch (err) {
+        console.error(err);
+      }
     }
   };
 

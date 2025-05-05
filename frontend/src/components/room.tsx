@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Card, CardContent, Button, Stack } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 interface RoomType {
   roomId: number;
@@ -14,6 +15,7 @@ interface RoomType {
 
 const Rooms: React.FC = () => {
   const [rooms, setRooms] = useState<RoomType[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch('/api/v1/rooms')
@@ -29,18 +31,26 @@ const Rooms: React.FC = () => {
         <Button component={RouterLink} to="/room_form" variant="contained">+ Create Room</Button>
       </Stack>
       {rooms.map(r => (
-        <Card
-          key={r.roomId}
-          component={RouterLink}
-          to={`/rooms/${r.roomId}`}
-          sx={{ mb: 2, textDecoration: 'none', bgcolor: 'grey.800', color: 'grey.100' }}
-        >
-          <CardContent>
-            <Typography variant="caption">Host {r.hostId}</Typography>
-            <Typography variant="h6" gutterBottom>{r.name}</Typography>
-            {r.description && <Typography variant="body2">{r.description}</Typography>}
-          </CardContent>
-        </Card>
+        <Box key={r.roomId} sx={{ mb: 2 }}>
+          <Card
+            component={RouterLink}
+            to={`/rooms/${r.roomId}`}
+            sx={{ mb: 1, textDecoration: 'none', bgcolor: 'grey.800', color: 'grey.100' }}
+          >
+            <CardContent>
+              <Typography variant="caption">Host {r.hostId ? `#${r.hostId}` : 'Anonymous'}</Typography>
+              <Typography variant="h6" gutterBottom>{r.name}</Typography>
+              {r.description && <Typography variant="body2">{r.description}</Typography>}
+            </CardContent>
+          </Card>
+          <Stack direction="row" spacing={1}>
+            <Button variant="outlined" onClick={() => navigate(`/room_form?roomId=${r.roomId}`)}>Edit</Button>
+            <Button variant="outlined" color="error" onClick={async () => {
+              await fetch(`/api/v1/rooms/${r.roomId}`, { method: 'DELETE' })
+              setRooms(prev => prev.filter(x => x.roomId !== r.roomId))
+            }}>Delete</Button>
+          </Stack>
+        </Box>
       ))}
     </Box>
   );

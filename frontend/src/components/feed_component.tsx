@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Card, CardContent, Avatar, Button, Stack } from '@mui/material';
+import { useLocation } from 'react-router-dom';
 
 interface Host { userId: number; name: string | null; avatar?: string | null; }
 interface Activity { messageID: number; title: string; body: string; senderID: number; createdAt: string; }
@@ -7,16 +8,33 @@ interface Activity { messageID: number; title: string; body: string; senderID: n
 const Sidebar: React.FC = () => {
   const [hosts, setHosts] = useState<Host[]>([]);
   const [activities, setActivities] = useState<Activity[]>([]);
+  const { search } = useLocation();
 
   useEffect(() => {
     fetch('/api/v1/users')
       .then(res => res.json())
       .then(data => setHosts(data))
       .catch(console.error);
-    fetch('/api/v1/messages')
+  }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams(search);
+    const topicId = params.get('topicId');
+    const url = topicId ? `/api/v1/messages?topicId=${topicId}` : '/api/v1/messages';
+    fetch(url)
       .then(res => res.json())
       .then(data => setActivities(data))
       .catch(console.error);
+  }, [search]);
+
+  // Remove deleted messages from recent activities
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent<number>).detail;
+      setActivities(prev => prev.filter(act => act.messageID !== detail));
+    };
+    window.addEventListener('messageDeleted', handler);
+    return () => window.removeEventListener('messageDeleted', handler);
   }, []);
 
   return (

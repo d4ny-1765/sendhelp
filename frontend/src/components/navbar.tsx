@@ -17,6 +17,7 @@ import {
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import SearchIcon from '@mui/icons-material/Search';
 import userIcon from '../assets/user.png';
+import { useAuth } from '../contexts/AuthContext';
 
 interface Notification {
   id: number;
@@ -28,6 +29,9 @@ interface Notification {
 }
 
 const Navbar: React.FC = () => {
+
+  const { auth, logout } = useAuth();
+
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 
@@ -87,6 +91,25 @@ const Navbar: React.FC = () => {
         >
           ComplainIt
         </Typography>
+
+        {/ * Navigation buttons */}
+        {auth ? (
+          <>
+            <IconButton component={RouterLink} to="/profile" sx={{ p: 0, ml: 2 }}>
+              <Avatar
+                src={userIcon}
+                sx={{ width: 36, height: 36 }}
+              />
+            </IconButton>
+            <Button color="inherit" onClick={logout}>
+              Logout
+            </Button>
+          </>
+        ) : (
+          <Button color="inherit" component={RouterLink} to="/login">
+            Login
+          </Button>
+        )}
 
         {/* Center: Search Bar */}
         <Box component="form" onSubmit={handleSearch} sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
