@@ -4,7 +4,7 @@ import Navbar from './components/navbar';
 import Home from './components/home';
 import RoomForm from './components/room_form';
 import RoomDetail from './components/room_detail';
-
+import { ProfilePage } from './components/profile';
 const App: React.FC = () => (
   <BrowserRouter>
     <Navbar />
@@ -12,7 +12,7 @@ const App: React.FC = () => (
       <Route path="/" element={<Home />} />
       <Route path="/room_form" element={<RoomForm />} />
       <Route path="/rooms/:roomId" element={<RoomDetail />} />
-      
+      <Route path="/profile" element={<ProfilePage />} />
     </Routes>
   </BrowserRouter>
 );
