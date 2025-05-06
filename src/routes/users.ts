@@ -1,13 +1,32 @@
 import express from 'express';
 import { createUser, getAllUsers, getUserById, updateUser, deleteUser } from '../repositories/user.js';
-import { followUser, unfollowUser, getFollowers, getFollowing } from '../repositories/follow.js';
+import { db } from '../db/db.js';
 
 const router = express.Router();
 
 router.get('/users', async (req, res, next) => {
     try {
         const users = await getAllUsers();
-        res.json(users);
+        const usersWithStats = await Promise.all(users.map(async user => {
+            const followers = await db
+                .selectFrom('user_follows')
+                .where('followingId', '=', user.userId)
+                .select('followerId')
+                .execute();
+
+            const following = await db
+                .selectFrom('user_follows')
+                .where('followerId', '=', user.userId)
+                .select('followingId')
+                .execute();
+
+            return {
+                ...user,
+                followers: followers.length,
+                following: following.length
+            };
+        }));
+        res.json(usersWithStats);
     } catch (err) {
         next(err);
     }
@@ -49,45 +68,28 @@ router.delete('/users/:userId', async (req, res, next) => {
     }
 });
 
-router.post('/users/:userId/follow', async (req, res, next) => {
+// Get user stats (followers and following)
+router.get('/users/:userId/stats', async (req, res, next) => {
     try {
-        const followingId = +req.params.userId;
-        const followerId = +req.body.followerId;
-        await followUser(followerId, followingId, new Date());
-        res.status(204).end();
-    } catch (err: any) {
-        if (err.message === "Can't follow yourself") {
-            res.status(400).json({ error: err.message });
-        } else {
-            next(err);
-        }
-    }
-});
+        const userId = +req.params.userId;
+        
+        const followers = await db
+            .selectFrom('user_follows')
+            .where('followingId', '=', userId)
+            .select('followerId')
+            .execute();
 
-router.delete('/users/:userId/unfollow', async (req, res, next) => {
-    try {
-        const followingId = +req.params.userId;
-        const followerId = +req.body.followerId;
-        await unfollowUser(followerId, followingId);
-        res.status(204).end();
-    } catch (err) {
-        next(err);
-    }
-});
+        const following = await db
+            .selectFrom('user_follows')
+            .where('followerId', '=', userId)
+            .select('followingId')
+            .execute();
 
-router.get('/users/:userId/followers', async (req, res, next) => {
-    try {
-        const followers = await getFollowers(+req.params.userId);
-        res.json(followers);
-    } catch (err) {
-        next(err);
-    }
-});
-
-router.get('/users/:userId/following', async (req, res, next) => {
-    try {
-        const following = await getFollowing(+req.params.userId);
-        res.json(following);
+        res.json({
+            followers: followers.length,
+            following: following.length,
+            followingIds: following.map(f => f.followingId)
+        });
     } catch (err) {
         next(err);
     }

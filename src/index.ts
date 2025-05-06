@@ -6,6 +6,7 @@ import roomRouter from './routes/rooms.js';
 import messageRouter from './routes/messages.js';
 import topicRouter from './routes/topic.js';
 import authRouter from './routes/auth.js';
+import followRouter from './routes/follow.js';
 
 dotenv.config();
 await migrateToLatest();
@@ -17,6 +18,8 @@ app.use(express.json());
 app.use('/api/v1', authRouter);
 
 app.use('/api/v1', usersRouter);
+
+app.use('/api/v1', followRouter);
 
 app.use('/api/v1', roomRouter);
 

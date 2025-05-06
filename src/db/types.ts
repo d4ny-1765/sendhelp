@@ -42,7 +42,7 @@ export type RoomTable = {
 };
 
 export type followsTable = {
-  followerId: number;
+  followerId: Generated<number>;
   followingId: number;
   createdAt: Date;
 };

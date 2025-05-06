@@ -3,19 +3,20 @@ import {
   Box, 
   Button, 
   TextField, 
+  Dialog, 
+  DialogTitle, 
+  DialogContent, 
+  Alert, 
   Typography, 
-  Paper, 
-  Avatar,
+  List, 
+  ListItem, 
+  ListItemText,
   Container,
   CssBaseline,
+  Paper,
+  Avatar,
   Divider,
-  Alert,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  List,
-  ListItem,
-  ListItemText,
+  Stack
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import PersonIcon from '@mui/icons-material/Person';
@@ -23,7 +24,10 @@ import { useAuth } from '../contexts/AuthContext';
 
 const defaultTheme = createTheme();
 
+
+
 type ProfileData = {
+  id: number;
   name: string;
   email: string;
   bio: string;
@@ -40,6 +44,9 @@ export const ProfilePage: React.FC = () => {
   const { userId: currentUserId } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState<ProfileData | null>(null);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followersCount, setFollowersCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
   const [showPasswordFields, setShowPasswordFields] = useState(false);
   const [success, setSuccess] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
@@ -48,8 +55,7 @@ export const ProfilePage: React.FC = () => {
     newPassword: false,
     confirmPassword: false
   });
-  const [isFollowing, setIsFollowing] = useState(false);
-const [dialogType, setDialogType] = useState<'followers' | 'following' | null>(null);
+  const [dialogType, setDialogType] = useState<'followers' | 'following' | null>(null);
   const [dialogUsers, setDialogUsers] = useState<Array<{ id: string, name: string }>>([]);
 
   useEffect(() => {
@@ -58,28 +64,13 @@ const [dialogType, setDialogType] = useState<'followers' | 'following' | null>(n
       
       try {
         const response = await fetch(`/api/v1/users/${userId}`);
-        console.log('API Response:', response);
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
+        if (!response.ok) throw new Error('Failed to fetch profile');
         const data = await response.json();
-        console.log('Profile data:', data);
-        
-        // Initialize profile with default values if some fields are missing
-        setProfile({
-          name: data.name || '',
-          email: data.email || '',
-          bio: data.bio || 'No bio available',
-          followers: data.followers || 0,
-          following: data.following || 0,
-          isFollowing: data.isFollowing || false,
-        });
-        setIsFollowing(data.isFollowing || false);
+        setProfile(data);
+        setFollowersCount(data.followers);
+        setFollowingCount(data.following);
       } catch (error) {
         console.error('Error fetching profile:', error);
-        setApiError(error instanceof Error ? error.message : 'Failed to load profile');
       }
     };
 
@@ -112,7 +103,7 @@ const [dialogType, setDialogType] = useState<'followers' | 'following' | null>(n
 
   const handleOpenDialog = async (type: 'followers' | 'following') => {
     try {
-      const response = await fetch(`/api/v1/users/${userId}/${type}`);
+      const response = await fetch(`/api/v1/following`);
       if (!response.ok) throw new Error('Failed to fetch users');
       const users = await response.json();
       setDialogUsers(users);
@@ -194,10 +185,20 @@ const [dialogType, setDialogType] = useState<'followers' | 'following' | null>(n
           <Avatar sx={{ m: 1, bgcolor: 'secondary.main', width: 80, height: 80 }}>
             <PersonIcon fontSize="large" />
           </Avatar>
-          <Typography sx={{ fontFamily: 'Inter' }} component="h1" variant="h5">
+          <Typography variant="h6" component="div">
             {profile.name}
           </Typography>
-          
+          <Typography variant="subtitle1" color="text.secondary">
+            {profile.bio}
+          </Typography>
+          <Stack direction="row" spacing={2} sx={{ mt: 1 }}>
+            <Typography variant="body2" color="text.secondary">
+              Followers: {followersCount}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Following: {followingCount}
+            </Typography>
+          </Stack>
           {apiError && (
             <Alert severity="error" sx={{ width: '100%', mt: 2 }}>
               {apiError}

@@ -1,13 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Card, CardContent, Avatar, Button, Stack } from '@mui/material';
 import { useLocation } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
-interface Host { userId: number; name: string | null; avatar?: string | null; }
+interface Host { 
+  userId: number; 
+  name: string | null; 
+  avatar?: string | null; 
+  followers: number;
+  following: number;
+}
 interface Activity { messageID: number; title: string; body: string; senderID: number; createdAt: string; }
 
 const Sidebar: React.FC = () => {
+  const { userId: currentUserId } = useAuth();
   const [hosts, setHosts] = useState<Host[]>([]);
   const [activities, setActivities] = useState<Activity[]>([]);
+  const [followingIds, setFollowingIds] = useState<number[]>([]);
+  const [loadingFollow, setLoadingFollow] = useState<number | null>(null);
   const { search } = useLocation();
 
   useEffect(() => {
@@ -15,7 +25,15 @@ const Sidebar: React.FC = () => {
       .then(res => res.json())
       .then(data => setHosts(data))
       .catch(console.error);
-  }, []);
+
+    // Fetch following IDs for the current user
+    if (currentUserId) {
+      fetch(`/api/v1/following`)
+        .then(res => res.json())
+        .then(data => setFollowingIds(data))
+        .catch(console.error);
+    }
+  }, [currentUserId]);
 
   useEffect(() => {
     const params = new URLSearchParams(search);
@@ -37,10 +55,43 @@ const Sidebar: React.FC = () => {
     return () => window.removeEventListener('messageDeleted', handler);
   }, []);
 
+  const handleFollow = async (userId: number) => {
+    if (loadingFollow) return;
+    setLoadingFollow(userId);
+    
+    const isFollowing = followingIds.includes(userId);
+    const method = isFollowing ? 'DELETE' : 'POST';
+    
+    try {
+      const response = await fetch(`/api/v1/follow/${userId}`, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          followerId: currentUserId,
+          followingId: userId
+        }),
+      });
+      
+      if (response.ok) {
+        setFollowingIds(prev => 
+          isFollowing 
+            ? prev.filter(id => id !== userId)
+            : [...prev, userId]
+        );
+      }
+    } catch (error) {
+      console.error('Failed to update follow status:', error);
+    } finally {
+      setLoadingFollow(null);
+    }
+  };
+
   return (
     <Box>
       <Typography variant="subtitle1" gutterBottom>Top Hosts</Typography>
-      {hosts.slice(0, 5).map(host => (
+      {hosts.slice(0, 5).filter(host => host.userId !== currentUserId).map(host => (
         <Card key={host.userId} sx={{ mb: 1, bgcolor: 'grey.800', color: 'grey.100' }}>
           <CardContent sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <Stack direction="row" spacing={2} alignItems="center">
@@ -49,7 +100,14 @@ const Sidebar: React.FC = () => {
               </Avatar>
               <Typography>{host.name}</Typography>
             </Stack>
-            <Button size="small" variant="outlined" onClick={() => console.log('Follow', host.userId)}>Follow</Button>
+            <Button 
+              size="small" 
+              variant={followingIds.includes(host.userId) ? "contained" : "outlined"}
+              onClick={() => handleFollow(host.userId)}
+              disabled={loadingFollow === host.userId}
+            >
+              {followingIds.includes(host.userId) ? 'Unfollow' : 'Follow'}
+            </Button>
           </CardContent>
         </Card>
       ))}

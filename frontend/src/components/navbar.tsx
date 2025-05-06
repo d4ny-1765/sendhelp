@@ -64,7 +64,7 @@ const Navbar: React.FC = () => {
     
     try {
       setIsLoading(true);
-      const response = await fetch(`/api/v1/users/${auth.user.userId}/following`, {
+      const response = await fetch(`/api/v1/following/${auth.user.userId}`, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${auth.token}`
