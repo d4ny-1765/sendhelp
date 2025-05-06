@@ -24,6 +24,7 @@ app.use('/api/v1', messageRouter);
 
 app.use('/api/v1', topicRouter);
 
+
 if (process.env.APP_ENV !== 'test') {
     app.listen(3000, () => console.log('Listening on port 3000'));
 }

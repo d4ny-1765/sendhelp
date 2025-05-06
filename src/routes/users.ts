@@ -64,7 +64,7 @@ router.post('/users/:userId/follow', async (req, res, next) => {
     }
 });
 
-router.delete('/users/:userId/follow', async (req, res, next) => {
+router.delete('/users/:userId/unfollow', async (req, res, next) => {
     try {
         const followingId = +req.params.userId;
         const followerId = +req.body.followerId;

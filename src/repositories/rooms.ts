@@ -28,6 +28,15 @@ export async function getRoomsByTopic(topicId: number): Promise<Room[]> {
         .execute();
 }
 
+// Get rooms filtered by hostId
+export async function getRoomsByHost(hostId: number): Promise<Room[]> {
+    return await db
+        .selectFrom('room')
+        .select(['roomId', 'hostId', 'topicId', 'name', 'description', 'createdAt', 'updatedAt'])
+        .where('hostId', '=', hostId)
+        .execute();
+}
+
 // Get a room by ID
 export async function getRoomById(roomId: number): Promise<Room> {
     return await db

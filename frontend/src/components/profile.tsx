@@ -49,7 +49,7 @@ export const ProfilePage: React.FC = () => {
     confirmPassword: false
   });
   const [isFollowing, setIsFollowing] = useState(false);
-  const [dialogType, setDialogType] = useState<'followers' | 'following' | null>(null);
+const [dialogType, setDialogType] = useState<'followers' | 'following' | null>(null);
   const [dialogUsers, setDialogUsers] = useState<Array<{ id: string, name: string }>>([]);
 
   useEffect(() => {
@@ -212,15 +212,15 @@ export const ProfilePage: React.FC = () => {
 
           <Box sx={{ display: 'flex', gap: 2, my: 2 }}>
             <Button 
-              variant="outlined" 
+variant="outlined" 
               onClick={() => handleOpenDialog('followers')}
-            >
+>
               Followers: {profile.followers || 0}
             </Button>
             <Button 
-              variant="outlined" 
+variant="outlined" 
               onClick={() => handleOpenDialog('following')}
-            >
+>
               Following: {profile.following || 0}
             </Button>
             {userId !== currentUserId && (

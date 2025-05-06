@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -21,11 +21,15 @@ import { useAuth } from '../contexts/AuthContext';
 
 interface Notification {
   id: number;
-  type: 'new_post' | 'comment';
+  type: 'new_post' | 'comment' | 'followed_post' | 'new_room';
   section?: string;
   postTitle?: string;
   roomId?: string;
   commentText?: string;
+  userId?: string;
+  userName?: string;
+  roomName?: string;
+  createdAt?: string;
 }
 
 const Navbar: React.FC = () => {
@@ -51,30 +55,55 @@ const Navbar: React.FC = () => {
     setAnchorEl(null);
   };
 
-  // Sample notifications (replace with backend call)
-  const [notifications, setNotifications] = useState<Notification[]>([
-    {
-      id: 1,
-      type: 'new_post',
-      section: 'Python',
-      postTitle: 'How do I use decorators?',
-      roomId: 'python-123',
-    },
-    {
-      id: 2,
-      type: 'comment',
-      postTitle: 'Best way to handle promises in JS?',
-      roomId: 'js-456',
-      commentText: 'You could use async/await instead...',
-    },
-  ]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notificationError, setNotificationError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Future hook to fetch real notifications
-  // useEffect(() => {
-  //   fetch('/api/notifications')
-  //     .then((res) => res.json())
-  //     .then(setNotifications);
-  // }, []);
+  const fetchNotifications = useCallback(async () => {
+    if (!auth) return;
+    
+    try {
+      setIsLoading(true);
+      const response = await fetch(`/api/v1/users/${auth.user.userId}/following`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${auth.token}`
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch notifications');
+      }
+
+      const rooms = await response.json();
+      // Convert rooms to notifications format
+      const notifications: Notification[] = rooms.map((room: any) => ({
+        id: room.roomId,
+        type: 'new_room',
+        roomId: room.roomId,
+        userName: room.hostName,
+        roomName: room.name,
+        createdAt: room.createdAt
+      }));
+      
+      setNotifications(notifications);
+      setNotificationError(null);
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+      setNotificationError('Failed to load notifications');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [auth]);
+
+  useEffect(() => {
+    fetchNotifications();
+    
+    // Poll for new notifications every 30 seconds
+    const intervalId = setInterval(fetchNotifications, 30000);
+
+    return () => clearInterval(intervalId);
+  }, [fetchNotifications]);
 
   return (
     <AppBar position="static" sx={{ backgroundColor: '#04a777' }}>
@@ -121,38 +150,47 @@ const Navbar: React.FC = () => {
 
         {/* Right: Notifications, Profile, Login */}
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <IconButton onClick={handleNotificationsClick} color="inherit" sx={{ ml: 1 }}>
-            <NotificationsIcon />
-          </IconButton>
-          <Menu
-            anchorEl={anchorEl}
-            open={open}
-            onClose={handleNotificationsClose}
-            MenuListProps={{
-              'aria-labelledby': 'notifications-button',
-            }}
-          >
-            {notifications.length > 0 ? (
-              notifications.map((note) => {
-                const link = `/room/${note.roomId}`;
-                let text = '';
+          {auth && (
+            <>
+              <IconButton onClick={handleNotificationsClick} color="inherit" sx={{ ml: 1 }}>
+                <NotificationsIcon />
+              </IconButton>
+              <Menu
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleNotificationsClose}
+                MenuListProps={{
+                  'aria-labelledby': 'notifications-button',
+                }}
+              >
+                {isLoading ? (
+                  <MenuItem disabled>Loading notifications...</MenuItem>
+                ) : notificationError ? (
+                  <MenuItem disabled>{notificationError}</MenuItem>
+                ) : notifications.length > 0 ? (
+                  notifications.map((note) => {
+                    const link = `/rooms/${note.roomId}`;
+                    let text = '';
 
-                if (note.type === 'new_post') {
-                  text = `New post in ${note.section}: "${note.postTitle}"`;
-                } else if (note.type === 'comment') {
-                  text = `New comment on your post: "${note.commentText}"`;
-                }
+                    if (note.type === 'new_room') {
+                      text = `${note.userName} created room: "${note.roomName}"`;
+                    }
 
-                return (
-                  <MenuItem key={note.id} component={RouterLink} to={link} onClick={handleNotificationsClose}>
-                    <ListItemText primary={text} />
-                  </MenuItem>
-                );
-              })
-            ) : (
-              <MenuItem disabled>No new notifications</MenuItem>
-            )}
-          </Menu>
+                    return (
+                      <MenuItem key={note.id} component={RouterLink} to={link} onClick={handleNotificationsClose}>
+                        <ListItemText 
+                          primary={text}
+                          secondary={note.createdAt ? new Date(note.createdAt).toLocaleString() : ''}
+                        />
+                      </MenuItem>
+                    );
+                  })
+                ) : (
+                  <MenuItem disabled>No new rooms from followed users</MenuItem>
+                )}
+              </Menu>
+            </>
+          )}
 
           <IconButton component={RouterLink} to="/profile" sx={{ p: 0, ml: 2 }}>
             <Avatar
@@ -162,6 +200,7 @@ const Navbar: React.FC = () => {
             />
           </IconButton>
           {auth ? (
+            
             <Button color="inherit" onClick={logout} sx={{ ml: 2 }}>
               Logout
             </Button>
