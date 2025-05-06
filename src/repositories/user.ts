@@ -62,7 +62,6 @@ export async function deleteUser(userId: number): Promise<User> {
     return deletedUser;
 }
 
-
 export async function findUserByEmail(email: string): Promise<User | undefined> {
     return await db
         .selectFrom('user')
@@ -70,7 +69,6 @@ export async function findUserByEmail(email: string): Promise<User | undefined> 
         .where('email', '=', email)
         .executeTakeFirst();
 }
-
 
 export async function createAuthUser(email: string, password: string, name: string): Promise<User> {
     const passwordHash = await bcrypt.hash(password, 10);
@@ -82,3 +80,4 @@ export async function createAuthUser(email: string, password: string, name: stri
         .executeTakeFirstOrThrow();
     return newUser;
 }
+

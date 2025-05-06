@@ -9,7 +9,13 @@ import {
   Container,
   CssBaseline,
   Divider,
-  Alert
+  Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  List,
+  ListItem,
+  ListItemText,
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import PersonIcon from '@mui/icons-material/Person';
@@ -21,6 +27,9 @@ type ProfileData = {
   name: string;
   email: string;
   bio: string;
+  followers: number;
+  following: number;
+  isFollowing?: boolean;
   currentPassword?: string;
   newPassword?: string;
   confirmPassword?: string;
@@ -28,6 +37,7 @@ type ProfileData = {
 
 export const ProfilePage: React.FC = () => {
   const { userId } = useAuth();
+  const { userId: currentUserId } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [showPasswordFields, setShowPasswordFields] = useState(false);
@@ -38,6 +48,9 @@ export const ProfilePage: React.FC = () => {
     newPassword: false,
     confirmPassword: false
   });
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [dialogType, setDialogType] = useState<'followers' | 'following' | null>(null);
+  const [dialogUsers, setDialogUsers] = useState<Array<{ id: string, name: string }>>([]);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -59,7 +72,11 @@ export const ProfilePage: React.FC = () => {
           name: data.name || '',
           email: data.email || '',
           bio: data.bio || 'No bio available',
+          followers: data.followers || 0,
+          following: data.following || 0,
+          isFollowing: data.isFollowing || false,
         });
+        setIsFollowing(data.isFollowing || false);
       } catch (error) {
         console.error('Error fetching profile:', error);
         setApiError(error instanceof Error ? error.message : 'Failed to load profile');
@@ -68,6 +85,43 @@ export const ProfilePage: React.FC = () => {
 
     fetchProfile();
   }, [userId]);
+
+  const handleFollow = async () => {
+    if (!userId || !currentUserId) return;
+    
+    try {
+      if (isFollowing) {
+        await fetch(`/api/v1/users/${userId}/follow`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ followerId: currentUserId })
+        });
+        setIsFollowing(false);
+      } else {
+        await fetch(`/api/v1/users/${userId}/follow`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ followerId: currentUserId })
+        });
+        setIsFollowing(true);
+      }
+    } catch (error) {
+      console.error('Failed to follow/unfollow:', error);
+    }
+  };
+
+  const handleOpenDialog = async (type: 'followers' | 'following') => {
+    try {
+      const response = await fetch(`/api/v1/users/${userId}/${type}`);
+      if (!response.ok) throw new Error('Failed to fetch users');
+      const users = await response.json();
+      setDialogUsers(users);
+      setDialogType(type);
+    } catch (error) {
+      console.error(`Error fetching ${type}:`, error);
+      setApiError(`Failed to load ${type}`);
+    }
+  };
 
   if (apiError) {
     return <Typography color="error">{apiError}</Typography>;
@@ -142,7 +196,6 @@ export const ProfilePage: React.FC = () => {
           </Avatar>
           <Typography sx={{ fontFamily: 'Inter' }} component="h1" variant="h5">
             {profile.name}
-
           </Typography>
           
           {apiError && (
@@ -156,6 +209,49 @@ export const ProfilePage: React.FC = () => {
               Profile updated successfully!
             </Alert>
           )}
+
+          <Box sx={{ display: 'flex', gap: 2, my: 2 }}>
+            <Button 
+              variant="outlined" 
+              onClick={() => handleOpenDialog('followers')}
+            >
+              Followers: {profile.followers || 0}
+            </Button>
+            <Button 
+              variant="outlined" 
+              onClick={() => handleOpenDialog('following')}
+            >
+              Following: {profile.following || 0}
+            </Button>
+            {userId !== currentUserId && (
+              <Button
+                variant={isFollowing ? "outlined" : "contained"}
+                onClick={handleFollow}
+              >
+                {isFollowing ? "Unfollow" : "Follow"}
+              </Button>
+            )}
+          </Box>
+
+          <Dialog 
+            open={dialogType !== null} 
+            onClose={() => setDialogType(null)}
+            maxWidth="sm"
+            fullWidth
+          >
+            <DialogTitle>
+              {dialogType === 'followers' ? 'Followers' : 'Following'}
+            </DialogTitle>
+            <DialogContent>
+              <List>
+                {dialogUsers.map(user => (
+                  <ListItem key={user.id}>
+                    <ListItemText primary={user.name} />
+                  </ListItem>
+                ))}
+              </List>
+            </DialogContent>
+          </Dialog>
 
           <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3, width: '100%' }}>
             {isEditing ? (

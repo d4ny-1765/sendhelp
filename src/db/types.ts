@@ -5,6 +5,7 @@ export type Database = {
   topic: TopicTable;
   room: RoomTable;
   message: messageTable;
+  user_follows: followsTable;
 };
 
 export type messageTable = {
@@ -38,4 +39,10 @@ export type RoomTable = {
   description: string | null;
   createdAt: ColumnType<Date, string | undefined, never>; // Auto-generated on insert
   updatedAt: ColumnType<Date, string | undefined, string | undefined>; // Auto-updated on update
+};
+
+export type followsTable = {
+  followerId: number;
+  followingId: number;
+  createdAt: Date;
 };
