@@ -7,26 +7,7 @@ const router = express.Router();
 router.get('/users', async (req, res, next) => {
     try {
         const users = await getAllUsers();
-        const usersWithStats = await Promise.all(users.map(async user => {
-            const followers = await db
-                .selectFrom('user_follows')
-                .where('followingId', '=', user.userId)
-                .select('followerId')
-                .execute();
-
-            const following = await db
-                .selectFrom('user_follows')
-                .where('followerId', '=', user.userId)
-                .select('followingId')
-                .execute();
-
-            return {
-                ...user,
-                followers: followers.length,
-                following: following.length
-            };
-        }));
-        res.json(usersWithStats);
+        res.json(users);
     } catch (err) {
         next(err);
     }
@@ -68,31 +49,6 @@ router.delete('/users/:userId', async (req, res, next) => {
     }
 });
 
-// Get user stats (followers and following)
-router.get('/users/:userId/stats', async (req, res, next) => {
-    try {
-        const userId = +req.params.userId;
-        
-        const followers = await db
-            .selectFrom('user_follows')
-            .where('followingId', '=', userId)
-            .select('followerId')
-            .execute();
 
-        const following = await db
-            .selectFrom('user_follows')
-            .where('followerId', '=', userId)
-            .select('followingId')
-            .execute();
-
-        res.json({
-            followers: followers.length,
-            following: following.length,
-            followingIds: following.map(f => f.followingId)
-        });
-    } catch (err) {
-        next(err);
-    }
-});
 
 export default router;

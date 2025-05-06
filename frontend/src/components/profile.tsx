@@ -191,14 +191,6 @@ export const ProfilePage: React.FC = () => {
           <Typography variant="subtitle1" color="text.secondary">
             {profile.bio}
           </Typography>
-          <Stack direction="row" spacing={2} sx={{ mt: 1 }}>
-            <Typography variant="body2" color="text.secondary">
-              Followers: {followersCount}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Following: {followingCount}
-            </Typography>
-          </Stack>
           {apiError && (
             <Alert severity="error" sx={{ width: '100%', mt: 2 }}>
               {apiError}
@@ -216,13 +208,13 @@ export const ProfilePage: React.FC = () => {
 variant="outlined" 
               onClick={() => handleOpenDialog('followers')}
 >
-              Followers: {profile.followers || 0}
+              Followers
             </Button>
             <Button 
 variant="outlined" 
               onClick={() => handleOpenDialog('following')}
 >
-              Following: {profile.following || 0}
+              Following
             </Button>
             {userId !== currentUserId && (
               <Button

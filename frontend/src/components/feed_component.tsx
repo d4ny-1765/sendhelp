@@ -7,10 +7,14 @@ interface Host {
   userId: number; 
   name: string | null; 
   avatar?: string | null; 
-  followers: number;
-  following: number;
 }
-interface Activity { messageID: number; title: string; body: string; senderID: number; createdAt: string; }
+interface Activity { 
+  messageID: number; 
+  title: string; 
+  body: string; 
+  senderID: number; 
+  createdAt: string; 
+}
 
 const Sidebar: React.FC = () => {
   const { userId: currentUserId } = useAuth();
@@ -21,18 +25,19 @@ const Sidebar: React.FC = () => {
   const { search } = useLocation();
 
   useEffect(() => {
-    fetch('/api/v1/users')
-      .then(res => res.json())
-      .then(data => setHosts(data))
-      .catch(console.error);
-
-    // Fetch following IDs for the current user
     if (currentUserId) {
       fetch(`/api/v1/following`)
         .then(res => res.json())
         .then(data => setFollowingIds(data))
         .catch(console.error);
     }
+  }, [currentUserId]);
+
+  useEffect(() => {
+    fetch('/api/v1/users')
+      .then(res => res.json())
+      .then(data => setHosts(data))
+      .catch(console.error);
   }, [currentUserId]);
 
   useEffect(() => {
@@ -63,7 +68,7 @@ const Sidebar: React.FC = () => {
     const method = isFollowing ? 'DELETE' : 'POST';
     
     try {
-      const response = await fetch(`/api/v1/follow/${userId}`, {
+      await fetch(`/api/v1/follow/${userId}`, {
         method,
         headers: {
           'Content-Type': 'application/json',
@@ -74,13 +79,13 @@ const Sidebar: React.FC = () => {
         }),
       });
       
-      if (response.ok) {
-        setFollowingIds(prev => 
-          isFollowing 
-            ? prev.filter(id => id !== userId)
-            : [...prev, userId]
-        );
-      }
+      setFollowingIds(prev => 
+        isFollowing 
+          ? prev.filter(id => id !== userId)
+          : [...prev, userId]
+      );
+      
+
     } catch (error) {
       console.error('Failed to update follow status:', error);
     } finally {
@@ -98,7 +103,9 @@ const Sidebar: React.FC = () => {
               <Avatar src={host.avatar || undefined}>
                 {!host.avatar && host.name?.charAt(0)}
               </Avatar>
-              <Typography>{host.name}</Typography>
+              <Stack spacing={1}>
+                <Typography variant="subtitle1">{host.name}</Typography>
+              </Stack>
             </Stack>
             <Button 
               size="small" 
