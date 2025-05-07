@@ -17,7 +17,6 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-
 const defaultTheme = createTheme();
 
 export default function LoginRegister() {
@@ -36,6 +35,7 @@ export default function LoginRegister() {
     password: false,
     confirmPassword: false
   });
+  const [errorMessage, setErrorMessage] = useState<string | null>(null); // Add state for error message
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -69,22 +69,14 @@ export default function LoginRegister() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body),
         });
-        
-        console.log('endpoint', endpoint);
-        console.log('body', body);
-        console.log('response data:', data);
-
-        if (!data.token || !data.user) {
-          throw new Error('Invalid response from server');
-        }
-
         login({
           token: data.token,
           user: data.user 
         });
         navigate('/');
-      } catch (err) {
+      } catch (err: any) {
         console.error(err);
+        setErrorMessage(err.message || 'An error occurred. Please try again.'); // Set error message
       }
     }
   };
@@ -92,30 +84,34 @@ export default function LoginRegister() {
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container 
-  maxWidth="sm" 
-  sx={{ 
-    minHeight: '100vh',
-    display: 'flex',
-    alignItems: 'center',
-    py: 4
-  }}
->
+        maxWidth="sm" 
+        sx={{ 
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          py: 4
+        }}
+      >
         <CssBaseline />
-        
         <Paper 
-    elevation={3} 
-    sx={{ 
-      width: '100%',
-      p: 4,
-      borderRadius: 2
-    }}
-  >
+          elevation={3} 
+          sx={{ 
+            width: '100%',
+            p: 4,
+            borderRadius: 2
+          }}
+        >
           <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
             <LockOutlinedIcon />
           </Avatar>
           <Typography sx={{ fontFamily: 'Inter' }} component="h1" variant="h5">
             {isLogin ? 'Sign in' : 'Sign up'}
           </Typography>
+          {errorMessage && ( // Display error message if it exists
+            <Typography color="error" sx={{ mt: 2 }}>
+              {errorMessage}
+            </Typography>
+          )}
           <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
             {!isLogin && (
               <Grid container spacing={2}>

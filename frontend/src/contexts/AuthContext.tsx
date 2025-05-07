@@ -37,7 +37,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   });
 
   const login = (newAuth: NonNullable<Auth>) => {
-    console.log('Login called with:', newAuth); // Debug login
     if (!newAuth.token || !newAuth.user) {
       console.error('Invalid auth data:', newAuth);
       return;

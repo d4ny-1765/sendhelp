@@ -40,7 +40,7 @@ router.post("/rooms", async (req, res, next) => {
     const token = authHeader.split(' ')[1];
     let payload: any;
     try {
-      payload = jwt.verify(token, JWT_SECRET) as jwt.JwtPayload;
+      payload = jwt.verify(token, JWT_SECRET);
     } catch (e) {
       console.log(token);
       console.log(JWT_SECRET);

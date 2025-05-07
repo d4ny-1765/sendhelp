@@ -156,7 +156,7 @@ export const ProfilePage: React.FC = () => {
     if (!validateForm()) return;
 
     try {
-      const response = await  apiFetch(`/api/v1/users/${userId}`, {
+      const updatedProfile = await apiFetch(`/api/v1/users/${userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -168,17 +168,11 @@ export const ProfilePage: React.FC = () => {
           ...(showPasswordFields && {
             currentPassword: profile.currentPassword,
             newPassword: profile.newPassword,
-            confirmPassword: profile.confirmPassword
+            confirmPassword: profile.confirmPassword,
           }),
         }),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Failed to update profile');
-      }
-
-      const updatedProfile = await response.json();
       setProfile(updatedProfile);
       setSuccess(true);
       setIsEditing(false);

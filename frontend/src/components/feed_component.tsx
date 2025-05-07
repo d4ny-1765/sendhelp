@@ -55,7 +55,7 @@ const Sidebar: React.FC = () => {
     
     try {
       const response = await apiFetch(`/api/v1/follow/${userId}`, { method });
-      if (response.ok) {
+      if (response) {
         setFollowingIds(prev => 
           isFollowing 
             ? prev.filter(id => id !== userId)
