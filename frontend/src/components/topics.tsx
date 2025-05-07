@@ -14,10 +14,10 @@ const Topics: React.FC = () => {
   useEffect(() => {
     async function loadTopics() {
       try {
-        const topicsData: Topic[] = await apiFetch('/api/v1/topics').then(res => res.json());
+        const topicsData: Topic[] = await apiFetch('/api/v1/topics');
         const validTopics: Topic[] = [];
         for (const t of topicsData) {
-          const rooms = await apiFetch(`/api/v1/rooms?topicId=${t.topicId}`).then(r => r.json());
+          const rooms = await apiFetch(`/api/v1/rooms?topicId=${t.topicId}`);
           if (rooms.length > 0) {
             validTopics.push(t);
           } else {

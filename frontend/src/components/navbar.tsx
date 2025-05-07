@@ -65,18 +65,13 @@ const Navbar: React.FC = () => {
     
     try {
       setIsLoading(true);
-      const response = await apiFetch(`/api/v1/following/${auth.user.userId}`, {
+      const rooms = await apiFetch(`/api/v1/following/${auth.user.userId}`, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${auth.token}`
         },
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch notifications');
-      }
-
-      const rooms = await response.json();
       // Convert rooms to notifications format
       const notifications: Notification[] = rooms.map((room: any) => ({
         id: room.roomId,

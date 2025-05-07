@@ -21,8 +21,7 @@ const RoomForm: React.FC = () => {
 
   useEffect(() => {
     apiFetch('/api/v1/topics')
-      .then(res => res.json())
-      .then(data => setTopics(data))
+      .then(setTopics)
       .catch(console.error);
   }, []);
 
@@ -34,16 +33,19 @@ const RoomForm: React.FC = () => {
       if (selectedTopic && topics.find(t => t.topicId === selectedTopic.topicId)) {
         finalTopicId = selectedTopic.topicId;
       } else if (topicInput) {
-        const tRes = await apiFetch('/api/v1/topics', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: topicInput })
+        const newTopic: Topic = await apiFetch('/api/v1/topics', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: topicInput })
         });
-        const newTopic: Topic = await tRes.json();
         finalTopicId = newTopic.topicId;
       } else {
-        console.error('Topic is required'); return;
+        console.error('Topic is required');
+        return;
       }
-      console.log('Auth header being sent:', `Bearer ${auth.token}`);
-      const res = await apiFetch('/api/v1/rooms', {
+
+      // Just create the room and redirect
+      await apiFetch('/api/v1/rooms', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -51,15 +53,10 @@ const RoomForm: React.FC = () => {
         },
         body: JSON.stringify({ name, description, topicId: finalTopicId }),
       });
-      console.log('Response status:', res.status);
-      console.log('Response body:', await res.json());
-      if (res.ok) {
-        setName('');
-        setDescription('');
-        navigate('/');
-      } else {
-        console.error('Create failed');
-      }
+
+      setName('');
+      setDescription('');
+      navigate('/');
     } catch (err) {
       console.error(err);
     }
@@ -93,6 +90,10 @@ const RoomForm: React.FC = () => {
           onChange={(_event, newVal) => setSelectedTopic(typeof newVal === 'string' ? { topicId: 0, name: newVal } : newVal)}
           onInputChange={(_event, newInput) => setTopicInput(newInput)}
           renderInput={(params) => <TextField {...params} label="Topic" required fullWidth />}
+          isOptionEqualToValue={(option, value) => 
+            option.topicId === value.topicId
+          }
+          getOptionKey={(option) => typeof option === 'string' ? option : option.topicId}
         />
         <Button type="submit" variant="contained">Create Room</Button>
       </Stack>

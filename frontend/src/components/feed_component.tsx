@@ -40,7 +40,7 @@ const Sidebar: React.FC = () => {
   }, [search]);
 
   useEffect(() => {
-    fetch('/api/v1/users/following')
+    fetch('/api/v1/following')
       .then(res => res.json())
       .then(data => setFollowingIds(data.map((user: any) => user.userId)))
       .catch(console.error);

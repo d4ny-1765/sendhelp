@@ -42,9 +42,10 @@ const Rooms: React.FC = () => {
         backgroundColor: 'action.hover',
       }
     }}
-  >         <CardContent>
-              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-      Host {r.hostId ? `#${r.hostId}` : 'Anonymous'}
+  >
+    <CardContent>
+    <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+      {r.name ? `@${r.name}` : 'Anonymous'}
     </Typography>
     <Typography variant="h6" color="primary" gutterBottom>
       {r.name}
