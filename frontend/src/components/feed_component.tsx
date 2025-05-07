@@ -54,7 +54,7 @@ const Sidebar: React.FC = () => {
     const method = isFollowing ? 'DELETE' : 'POST';
     
     try {
-      const response = await apiFetch(`/api/v1/users/${userId}/follow`, { method });
+      const response = await apiFetch(`/api/v1/follow/${userId}`, { method });
       if (response.ok) {
         setFollowingIds(prev => 
           isFollowing 
