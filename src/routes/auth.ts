@@ -9,8 +9,8 @@ dotenv.config();
 
 const router = Router();
 
-const JWT_SECRET = "secret"; 
-const JWT_EXPIRES_IN = "24h";
+const JWT_SECRET = process.env.JWT_SECRET || "secret"; 
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "24h";
 
 router.post(
   '/register',
@@ -54,7 +54,7 @@ router.post(
         res.status(401).json({ error: 'Invalid credentials' });
         return;
       }
-      const options: SignOptions = { expiresIn: JWT_EXPIRES_IN };
+      const options: SignOptions = { expiresIn: JWT_EXPIRES_IN as SignOptions['expiresIn'] };
       const token = jwt.sign({ sub: user.userId }, JWT_SECRET, options);
       res.json({ token, user: { userId: user.userId, email: user.email, name: user.name } });
     } catch (err) {

@@ -19,6 +19,7 @@ dotenv.config();
 await migrateToLatest();
 
 export const app = express();
+app.use(express.json()); // Add this line to parse JSON bodies
 
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
