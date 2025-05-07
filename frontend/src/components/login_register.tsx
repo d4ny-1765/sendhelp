@@ -17,6 +17,7 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
+
 const defaultTheme = createTheme();
 
 export default function LoginRegister() {
@@ -58,9 +59,10 @@ export default function LoginRegister() {
     e.preventDefault();
     if (validateForm()) {
       try {
+        const baseURL = import.meta.env.VITE_API_BASE_URL;
         const endpoint = isLogin
-        ? 'https://stack-rant.onrender.com/api/v1/login'
-        : 'https://stack-rant.onrender.com/api/v1/register';
+        ? `${baseURL}/api/v1/login`
+        : `${baseURL}/api/v1/register`;
 
         const body = isLogin
           ? { email: formData.email, password: formData.password }
