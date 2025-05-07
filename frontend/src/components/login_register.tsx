@@ -82,6 +82,10 @@ export default function LoginRegister() {
           token: data.token,
           user: data.user 
         });
+        localStorage.setItem("auth", JSON.stringify({
+          token: data.token,
+          user: data.user
+        }));
         navigate('/');
       } catch (err) {
         console.error(err);
