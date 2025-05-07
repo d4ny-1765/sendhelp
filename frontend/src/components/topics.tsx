@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, List, ListItem, ListItemText } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
+import { apiFetch } from '../utils/api';
 
 interface Topic {
   topicId: number;
@@ -13,15 +14,15 @@ const Topics: React.FC = () => {
   useEffect(() => {
     async function loadTopics() {
       try {
-        const topicsData: Topic[] = await fetch('/api/v1/topics').then(res => res.json());
+        const topicsData: Topic[] = await apiFetch('/api/v1/topics').then(res => res.json());
         const validTopics: Topic[] = [];
         for (const t of topicsData) {
-          const rooms = await fetch(`/api/v1/rooms?topicId=${t.topicId}`).then(r => r.json());
+          const rooms = await apiFetch(`/api/v1/rooms?topicId=${t.topicId}`).then(r => r.json());
           if (rooms.length > 0) {
             validTopics.push(t);
           } else {
             // delete empty topic
-            await fetch(`/api/v1/topics/${t.topicId}`, { method: 'DELETE' });
+            await apiFetch(`/api/v1/topics/${t.topicId}`, { method: 'DELETE' });
           }
         }
         setTopics(validTopics);

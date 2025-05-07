@@ -17,6 +17,7 @@ import {
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import SearchIcon from '@mui/icons-material/Search';
 import userIcon from '../assets/user.png';
+import { apiFetch } from '../utils/api';
 import { useAuth } from '../contexts/AuthContext';
 
 interface Notification {
@@ -64,7 +65,7 @@ const Navbar: React.FC = () => {
     
     try {
       setIsLoading(true);
-      const response = await fetch(`/api/v1/following/${auth.user.userId}`, {
+      const response = await apiFetch(`/api/v1/following/${auth.user.userId}`, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${auth.token}`
@@ -106,7 +107,17 @@ const Navbar: React.FC = () => {
   }, [fetchNotifications]);
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: '#04a777' }}>
+    <AppBar 
+      position="sticky" 
+      elevation={0}
+      sx={{ 
+        backgroundColor: 'background.paper',
+        borderBottom: '1px solid',
+        borderColor: 'divider',
+        color: 'text.primary',
+        py: 1
+      }}
+    >
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
         {/* Left: Site title / logo */}
         <Typography

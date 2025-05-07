@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Card, CardContent, Avatar, Button, Stack } from '@mui/material';
 import { useLocation } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { apiFetch } from '../utils/api';
 
 interface Host { userId: number; name: string | null; avatar?: string | null; }
 interface Activity { messageID: number; title: string; body: string; senderID: number; createdAt: string; }
 
 const Sidebar: React.FC = () => {
+  const { userId: currentUserId } = useAuth();
   const [hosts, setHosts] = useState<Host[]>([]);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [followingIds, setFollowingIds] = useState<number[]>([]);
@@ -13,8 +16,16 @@ const Sidebar: React.FC = () => {
   const { search } = useLocation();
 
   useEffect(() => {
-    fetch('/api/v1/users')
-      .then(res => res.json())
+    if (currentUserId) {
+      apiFetch(`/api/v1/following`)
+        
+        .then(data => setFollowingIds(data))
+        .catch(console.error);
+    }
+  }, [currentUserId]);
+
+  useEffect(() => {
+    apiFetch('/api/v1/users')
       .then(data => setHosts(data))
       .catch(console.error);
   }, []);
@@ -23,8 +34,7 @@ const Sidebar: React.FC = () => {
     const params = new URLSearchParams(search);
     const topicId = params.get('topicId');
     const url = topicId ? `/api/v1/messages?topicId=${topicId}` : '/api/v1/messages';
-    fetch(url)
-      .then(res => res.json())
+    apiFetch(url)
       .then(data => setActivities(data))
       .catch(console.error);
   }, [search]);
@@ -44,7 +54,7 @@ const Sidebar: React.FC = () => {
     const method = isFollowing ? 'DELETE' : 'POST';
     
     try {
-      const response = await fetch(`/api/v1/users/${userId}/follow`, { method });
+      const response = await apiFetch(`/api/v1/users/${userId}/follow`, { method });
       if (response.ok) {
         setFollowingIds(prev => 
           isFollowing 

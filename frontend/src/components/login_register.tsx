@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { apiFetch } from '../utils/api';
 import { 
   Box, 
   Button, 
@@ -15,6 +16,7 @@ import { useAuth } from '../contexts/AuthContext';
 import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+
 
 const defaultTheme = createTheme();
 
@@ -57,11 +59,15 @@ export default function LoginRegister() {
     e.preventDefault();
     if (validateForm()) {
       try {
-        const endpoint = isLogin ? '/api/v1/login' : '/api/v1/register';
+        const baseURL = import.meta.env.VITE_API_BASE_URL;
+        const endpoint = isLogin
+        ? `${baseURL}/api/v1/login`
+        : `${baseURL}/api/v1/register`;
+
         const body = isLogin
           ? { email: formData.email, password: formData.password }
           : { email: formData.email, password: formData.password, firstName: formData.firstName, lastName: formData.lastName };
-        const res = await fetch(endpoint, {
+        const res = await apiFetch(endpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body),

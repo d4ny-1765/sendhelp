@@ -8,7 +8,12 @@ import { AuthProvider } from './contexts/AuthContext';
 import LoginRegister from './components/login_register';
 import { PrivateRoute } from './components/PrivateRoute';
 import ProfilePage from './components/profile';
+import { ThemeProvider } from '@mui/material/styles';
+import theme from './theme';
+
+
 const App: React.FC = () => (
+  <ThemeProvider theme={theme}>
   <AuthProvider>
     <BrowserRouter>
     <Navbar />
@@ -22,6 +27,7 @@ const App: React.FC = () => (
     </Routes>
   </BrowserRouter>
   </AuthProvider>
+  </ThemeProvider>
 );
 
 export default App;

@@ -20,6 +20,7 @@ import {
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import PersonIcon from '@mui/icons-material/Person';
 import { useAuth } from '../contexts/AuthContext'; 
+import { apiFetch } from '../utils/api';
 
 const defaultTheme = createTheme();
 
@@ -61,7 +62,7 @@ export const ProfilePage: React.FC = () => {
       if (!userId) return;
       
       try {
-        const response = await fetch(`/api/v1/users/${userId}`);
+        const response = await apiFetch(`/api/v1/users/${userId}`);
         if (!response.ok) throw new Error('Failed to fetch profile');
         const data = await response.json();
         setProfile(data);
@@ -78,14 +79,14 @@ export const ProfilePage: React.FC = () => {
     
     try {
       if (isFollowing) {
-        await fetch(`/api/v1/users/${userId}/follow`, {
+        await apiFetch(`/api/v1/users/${userId}/follow`, {
           method: 'DELETE',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ followerId: currentUserId })
         });
         setIsFollowing(false);
       } else {
-        await fetch(`/api/v1/users/${userId}/follow`, {
+        await apiFetch(`/api/v1/users/${userId}/follow`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ followerId: currentUserId })
@@ -99,7 +100,7 @@ export const ProfilePage: React.FC = () => {
 
   const handleOpenDialog = async (type: 'followers' | 'following') => {
     try {
-      const response = await fetch(`/api/v1/following`);
+      const response = await apiFetch(`/api/v1/following`);
       if (!response.ok) throw new Error('Failed to fetch users');
       const users = await response.json();
       setDialogUsers(users);
@@ -150,7 +151,7 @@ export const ProfilePage: React.FC = () => {
     if (!validateForm()) return;
 
     try {
-      const response = await fetch(`/api/v1/users/${userId}`, {
+      const response = await  apiFetch(`/api/v1/users/${userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
