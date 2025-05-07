@@ -32,15 +32,28 @@ const Rooms: React.FC = () => {
       </Stack>
       {rooms.map(r => (
         <Box key={r.roomId} sx={{ mb: 2 }}>
-          <Card
-            component={RouterLink}
-            to={`/rooms/${r.roomId}`}
-            sx={{ mb: 1, textDecoration: 'none', bgcolor: 'grey.800', color: 'grey.100' }}
-          >
-            <CardContent>
-              <Typography variant="caption">Host {r.hostId ? `#${r.hostId}` : 'Anonymous'}</Typography>
-              <Typography variant="h6" gutterBottom>{r.name}</Typography>
-              {r.description && <Typography variant="body2">{r.description}</Typography>}
+            <Card
+    component={RouterLink}
+    to={`/rooms/${r.roomId}`}
+    sx={{ 
+      mb: 2, 
+      textDecoration: 'none', 
+      '&:hover': {
+        backgroundColor: 'action.hover',
+      }
+    }}
+  >         <CardContent>
+              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+      Host {r.hostId ? `#${r.hostId}` : 'Anonymous'}
+    </Typography>
+    <Typography variant="h6" color="primary" gutterBottom>
+      {r.name}
+    </Typography>
+    {r.description && (
+      <Typography variant="body2" color="text.secondary">
+        {r.description}
+      </Typography>
+    )}
             </CardContent>
           </Card>
           <Stack direction="row" spacing={1}>
