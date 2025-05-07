@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link as RouterLink, useNavigate } from 'react-router-dom';
 import { Box, Typography, Button, Stack } from '@mui/material';
+import { apiFetch } from '../utils/api';
 
 interface RoomType {
   roomId: number;
@@ -19,8 +20,7 @@ const RoomDetail: React.FC = () => {
 
   useEffect(() => {
     if (!roomId) return;
-    fetch(`/api/v1/rooms/${roomId}`)
-      .then(res => res.json())
+    apiFetch(`/api/v1/rooms/${roomId}`)
       .then(data => setRoom(data))
       .catch(console.error);
   }, [roomId]);
@@ -46,7 +46,7 @@ const RoomDetail: React.FC = () => {
             Edit
           </Button>
           <Button variant="outlined" color="error" onClick={async () => {
-            await fetch(`/api/v1/rooms/${room.roomId}`, { method: 'DELETE' });
+            await apiFetch(`/api/v1/rooms/${room.roomId}`, { method: 'DELETE' });
             navigate('/');
           }}>
             Delete

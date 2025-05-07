@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Typography, Card, CardContent, Avatar, Button, Stack } from '@mui/material';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { apiFetch } from '../utils/api';
 
 interface Host { 
   userId: number; 
@@ -26,16 +27,15 @@ const Sidebar: React.FC = () => {
 
   useEffect(() => {
     if (currentUserId) {
-      fetch(`/api/v1/following`)
-        .then(res => res.json())
+      apiFetch(`/api/v1/following`)
+        
         .then(data => setFollowingIds(data))
         .catch(console.error);
     }
   }, [currentUserId]);
 
   useEffect(() => {
-    fetch('/api/v1/users')
-      .then(res => res.json())
+    apiFetch('/api/v1/users')
       .then(data => setHosts(data))
       .catch(console.error);
   }, [currentUserId]);
@@ -44,8 +44,7 @@ const Sidebar: React.FC = () => {
     const params = new URLSearchParams(search);
     const topicId = params.get('topicId');
     const url = topicId ? `/api/v1/messages?topicId=${topicId}` : '/api/v1/messages';
-    fetch(url)
-      .then(res => res.json())
+    apiFetch(url)
       .then(data => setActivities(data))
       .catch(console.error);
   }, [search]);
@@ -68,7 +67,7 @@ const Sidebar: React.FC = () => {
     const method = isFollowing ? 'DELETE' : 'POST';
     
     try {
-      await fetch(`/api/v1/follow/${userId}`, {
+      await apiFetch(`/api/v1/follow/${userId}`, {
         method,
         headers: {
           'Content-Type': 'application/json',

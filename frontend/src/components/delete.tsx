@@ -5,7 +5,7 @@ type DeleteDialogProps = {
   open: boolean;
   onClose: () => void;
   onConfirm: () => void;
-  itemName?: string; // Name of the item to delete
+  itemName?: string;
 };
 
 const DeleteDialog: React.FC<DeleteDialogProps> = ({ open, onClose, onConfirm, itemName }) => (

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Typography, Card, CardContent, Button, Stack } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import { apiFetch } from '../utils/api';
 
 interface RoomType {
   roomId: number;
@@ -18,8 +19,7 @@ const Rooms: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('/api/v1/rooms')
-      .then(res => res.json())
+    apiFetch('/api/v1/rooms')
       .then(data => setRooms(data))
       .catch(console.error);
   }, []);
@@ -46,7 +46,7 @@ const Rooms: React.FC = () => {
           <Stack direction="row" spacing={1}>
             <Button variant="outlined" onClick={() => navigate(`/room_form?roomId=${r.roomId}`)}>Edit</Button>
             <Button variant="outlined" color="error" onClick={async () => {
-              await fetch(`/api/v1/rooms/${r.roomId}`, { method: 'DELETE' })
+              await apiFetch(`/api/v1/rooms/${r.roomId}`, { method: 'DELETE' })
               setRooms(prev => prev.filter(x => x.roomId !== r.roomId))
             }}>Delete</Button>
           </Stack>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { apiFetch } from '../utils/api';
 import { 
   Box, 
   Button, 
@@ -61,7 +62,7 @@ export default function LoginRegister() {
         const body = isLogin
           ? { email: formData.email, password: formData.password }
           : { email: formData.email, password: formData.password, firstName: formData.firstName, lastName: formData.lastName };
-        const res = await fetch(endpoint, {
+        const res = await apiFetch(endpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body),

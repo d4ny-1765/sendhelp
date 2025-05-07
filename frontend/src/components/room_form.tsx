@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, TextField, Button, Stack, Typography, Autocomplete } from '@mui/material';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { apiFetch } from '../utils/api';
 
 interface Topic { topicId: number; name: string; }
 
@@ -19,7 +20,7 @@ const RoomForm: React.FC = () => {
   const [topicInput, setTopicInput] = useState('');
 
   useEffect(() => {
-    fetch('/api/v1/topics')
+    apiFetch('/api/v1/topics')
       .then(res => res.json())
       .then(data => setTopics(data))
       .catch(console.error);
@@ -33,7 +34,7 @@ const RoomForm: React.FC = () => {
       if (selectedTopic && topics.find(t => t.topicId === selectedTopic.topicId)) {
         finalTopicId = selectedTopic.topicId;
       } else if (topicInput) {
-        const tRes = await fetch('/api/v1/topics', {
+        const tRes = await apiFetch('/api/v1/topics', {
           method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: topicInput })
         });
         const newTopic: Topic = await tRes.json();
@@ -42,7 +43,7 @@ const RoomForm: React.FC = () => {
         console.error('Topic is required'); return;
       }
       console.log('Auth header being sent:', `Bearer ${auth.token}`);
-      const res = await fetch('/api/v1/rooms', {
+      const res = await apiFetch('/api/v1/rooms', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
