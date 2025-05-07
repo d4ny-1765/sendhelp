@@ -15,9 +15,7 @@ import {
   CssBaseline,
   Paper,
   Avatar,
-  Divider,
-  Stack
-} from '@mui/material';
+  Divider} from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import PersonIcon from '@mui/icons-material/Person';
 import { useAuth } from '../contexts/AuthContext'; 
@@ -45,8 +43,6 @@ export const ProfilePage: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [isFollowing, setIsFollowing] = useState(false);
-  const [followersCount, setFollowersCount] = useState(0);
-  const [followingCount, setFollowingCount] = useState(0);
   const [showPasswordFields, setShowPasswordFields] = useState(false);
   const [success, setSuccess] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
@@ -67,8 +63,6 @@ export const ProfilePage: React.FC = () => {
         if (!response.ok) throw new Error('Failed to fetch profile');
         const data = await response.json();
         setProfile(data);
-        setFollowersCount(data.followers);
-        setFollowingCount(data.following);
       } catch (error) {
         console.error('Error fetching profile:', error);
       }
