@@ -1,5 +1,6 @@
 export async function apiFetch(path: string, options?: RequestInit) {
-  const baseUrl = import.meta.env.VITE_API_URL;
+  const baseUrl = "https://stack-rant.onrender.com";
+
   const url = path.startsWith("http") ? path : `${baseUrl}${path}`;
 
   const response = await fetch(url, options);
