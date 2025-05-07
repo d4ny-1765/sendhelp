@@ -66,7 +66,8 @@ export default function LoginRegister() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body),
         });
-
+        console.log('endpoint', endpoint);
+        console.log('body', body);
         if (!res.ok) throw new Error('Authentication failed');
 
         const data = await res.json();

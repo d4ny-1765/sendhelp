@@ -16,7 +16,6 @@ import {
   Paper,
   Avatar,
   Divider,
-  Stack
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import PersonIcon from '@mui/icons-material/Person';
@@ -45,13 +44,12 @@ export const ProfilePage: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [isFollowing, setIsFollowing] = useState(false);
-  const [followersCount, setFollowersCount] = useState(0);
-  const [followingCount, setFollowingCount] = useState(0);
   const [showPasswordFields, setShowPasswordFields] = useState(false);
   const [success, setSuccess] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const [errors, setErrors] = useState({
     email: false,
+    currentPassword: false,
     newPassword: false,
     confirmPassword: false
   });
@@ -67,8 +65,6 @@ export const ProfilePage: React.FC = () => {
         if (!response.ok) throw new Error('Failed to fetch profile');
         const data = await response.json();
         setProfile(data);
-        setFollowersCount(data.followers);
-        setFollowingCount(data.following);
       } catch (error) {
         console.error('Error fetching profile:', error);
       }
@@ -134,8 +130,16 @@ export const ProfilePage: React.FC = () => {
     if (!profile) return false;
     const newErrors = {
       email: !/^\S+@\S+\.\S+$/.test(profile.email),
-      newPassword: showPasswordFields && (profile.newPassword?.length || 0) < 6,
-      confirmPassword: showPasswordFields && profile.newPassword !== profile.confirmPassword
+      currentPassword: showPasswordFields && !profile.currentPassword,
+      newPassword: showPasswordFields && (
+        !profile.newPassword ||
+        profile.newPassword.length < 6 ||
+        profile.newPassword.length > 50
+      ),
+      confirmPassword: showPasswordFields && (
+        !profile.confirmPassword ||
+        profile.confirmPassword !== profile.newPassword
+      )
     };
     setErrors(newErrors);
     return !Object.values(newErrors).some(Boolean);
@@ -158,11 +162,14 @@ export const ProfilePage: React.FC = () => {
           ...(showPasswordFields && {
             currentPassword: profile.currentPassword,
             newPassword: profile.newPassword,
+            confirmPassword: profile.confirmPassword
           }),
         }),
       });
+
       if (!response.ok) {
-        throw new Error('Failed to update profile');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to update profile');
       }
 
       const updatedProfile = await response.json();
@@ -171,9 +178,9 @@ export const ProfilePage: React.FC = () => {
       setIsEditing(false);
       setShowPasswordFields(false);
       setTimeout(() => setSuccess(false), 3000);
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      setApiError('Failed to update profile');
+      setApiError(error.message || 'Failed to update profile');
     }
   };
 
@@ -306,6 +313,8 @@ variant="outlined"
                       type="password"
                       value={profile.currentPassword || ''}
                       onChange={handleChange}
+                      error={errors.currentPassword}
+                      helperText={errors.currentPassword ? 'Please enter your current password' : ''}
                     />
                     <TextField
                       margin="normal"
@@ -317,7 +326,7 @@ variant="outlined"
                       value={profile.newPassword || ''}
                       onChange={handleChange}
                       error={errors.newPassword}
-                      helperText={errors.newPassword ? 'Password must be at least 6 characters' : ''}
+                      helperText={errors.newPassword ? 'Password must be 6-50 characters' : ''}
                     />
                     <TextField
                       margin="normal"
@@ -355,17 +364,19 @@ variant="outlined"
                 <Typography sx={{ fontFamily: 'Inter' }} variant="body1">
                   {profile.bio}
                 </Typography>
-                <Button
-                  fullWidth
-                  variant="outlined"
-                  sx={{ mt: 3, mb: 2 }}
-                  onClick={() => setIsEditing(true)}
-                >
-                  Edit Profile
-                </Button>
               </>
             )}
           </Box>
+          {isEditing ? null : (
+            <Button
+              fullWidth
+              variant="outlined"
+              sx={{ mt: 3, mb: 2 }}
+              onClick={() => setIsEditing(true)}
+            >
+              Edit Profile
+            </Button>
+          )}
         </Paper>
       </Container>
     </ThemeProvider>

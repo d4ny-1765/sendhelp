@@ -42,12 +42,30 @@ export async function createUser(user: Omit<User, 'userId'>): Promise<User> {
 export async function updateUser(user: User): Promise<User> {
     const { userId, name, email, bio = null, avatar = null, password = null } = user;
     const updatedUser = await db.transaction().execute(async (trx) => {
+        // Get current user data for password verification
+        const currentUser = await trx
+            .selectFrom('user')
+            .select(['password'])
+            .where('userId', '=', userId)
+            .executeTakeFirstOrThrow();
+
+        // Verify current password if provided
+        if (user.password && !await bcrypt.compare(user.password || '', currentUser.password || '')) {
+            throw new Error('Current password is incorrect');
+        }
+
+        // Hash new password if provided
+        if (user.password) {
+            user.password = await bcrypt.hash(user.password || '', 10);
+        }
+
         const result = await trx
             .updateTable('user')
             .set({ name, email, bio, avatar, password })
             .where('userId', '=', userId)
             .returning(['userId', 'name', 'email', 'bio', 'avatar', 'password'])
             .executeTakeFirstOrThrow();
+
         return result;
     });
     return updatedUser;
