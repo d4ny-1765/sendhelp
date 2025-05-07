@@ -64,19 +64,16 @@ export default function LoginRegister() {
           ? { email: formData.email, password: formData.password }
           : { email: formData.email, password: formData.password, firstName: formData.firstName, lastName: formData.lastName };
         
-        const res = await apiFetch(endpoint, {
+        const data = await apiFetch(endpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body),
         });
+        
         console.log('endpoint', endpoint);
         console.log('body', body);
-        if (!res.ok) throw new Error('Authentication failed');
+        console.log('response data:', data);
 
-        const data = await res.json();
-        console.log('Auth response:', data);
-
-        // Ensure we have the required data before calling login
         if (!data.token || !data.user) {
           throw new Error('Invalid response from server');
         }

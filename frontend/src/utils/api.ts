@@ -1,6 +1,6 @@
 export async function apiFetch(path: string, options?: RequestInit) {
-  const baseUrl = import.meta.env.VITE_API_BASE_URL;
-  const url = path.startsWith("http") ? path : `${baseUrl}${path}`;
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || '';  // Provide empty string as fallback
+  const url = path.startsWith("http") ? path : `${baseUrl.replace(/\/+$/, '')}/${path.replace(/^\/+/, '')}`;
   
   const response = await fetch(url, {
     ...options,
