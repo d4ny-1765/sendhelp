@@ -8,6 +8,7 @@ import messageRouter from './routes/messages.js';
 import topicRouter from './routes/topic.js';
 import authRouter from './routes/auth.js';
 import followRouter from './routes/follow.js';
+import path from 'path';
 
 dotenv.config();
 await migrateToLatest();
@@ -29,6 +30,11 @@ app.use('/api/v1', followRouter);
 app.use('/api/v1', roomRouter);
 app.use('/api/v1', messageRouter);
 app.use('/api/v1', topicRouter);
+app.use(express.static('dist'));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
 
 
 if (process.env.APP_ENV !== 'test') {
