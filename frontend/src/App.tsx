@@ -9,7 +9,6 @@ import LoginRegister from './components/login_register';
 import { PrivateRoute } from './components/PrivateRoute';
 import ProfilePage from './components/profile';
 import { ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
 import theme from './theme';
 
 
