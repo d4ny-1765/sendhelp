@@ -94,9 +94,25 @@ export default function LoginRegister() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Container sx={{ backgroundColor: '#daddd8', borderRadius: 2, boxShadow: 3, p: 3 }} component="main" maxWidth="xs">
+      <Container 
+  maxWidth="sm" 
+  sx={{ 
+    minHeight: '100vh',
+    display: 'flex',
+    alignItems: 'center',
+    py: 4
+  }}
+>
         <CssBaseline />
-        <Paper elevation={3} sx={{ mt: 8, p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        
+        <Paper 
+    elevation={3} 
+    sx={{ 
+      width: '100%',
+      p: 4,
+      borderRadius: 2
+    }}
+  >
           <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
             <LockOutlinedIcon />
           </Avatar>
