@@ -107,7 +107,17 @@ const Navbar: React.FC = () => {
   }, [fetchNotifications]);
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: '#04a777' }}>
+    <AppBar 
+      position="sticky" 
+      elevation={0}
+      sx={{ 
+        backgroundColor: 'background.paper',
+        borderBottom: '1px solid',
+        borderColor: 'divider',
+        color: 'text.primary',
+        py: 1
+      }}
+    >
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
         {/* Left: Site title / logo */}
         <Typography
