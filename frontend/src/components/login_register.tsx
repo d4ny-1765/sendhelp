@@ -59,14 +59,11 @@ export default function LoginRegister() {
     e.preventDefault();
     if (validateForm()) {
       try {
-        const baseURL = import.meta.env.VITE_API_BASE_URL;
-        const endpoint = isLogin
-        ? `${baseURL}/api/v1/login`
-        : `${baseURL}/api/v1/register`;
-
+        const endpoint = isLogin ? '/api/v1/login' : '/api/v1/register';
         const body = isLogin
           ? { email: formData.email, password: formData.password }
           : { email: formData.email, password: formData.password, firstName: formData.firstName, lastName: formData.lastName };
+        
         const res = await apiFetch(endpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
