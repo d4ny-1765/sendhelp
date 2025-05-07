@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import express from 'express';
-import { migrateToLatest } from "./db/migrate.js";
+import cors from 'cors'; // ✅ Import CORS properly
+import { migrateToLatest } from './db/migrate.js';
 import usersRouter from './routes/users.js';
 import roomRouter from './routes/rooms.js';
 import messageRouter from './routes/messages.js';
@@ -13,21 +14,23 @@ await migrateToLatest();
 
 export const app = express();
 
+app.use(cors({
+    origin: ['https://stack-rant-vite.onrender.com', 'http://localhost:5173'],
+  credentials: true,
+}));
+
+
 app.use(express.json());
 
+
 app.use('/api/v1', authRouter);
-
 app.use('/api/v1', usersRouter);
-
 app.use('/api/v1', followRouter);
-
 app.use('/api/v1', roomRouter);
-
 app.use('/api/v1', messageRouter);
-
 app.use('/api/v1', topicRouter);
 
 
 if (process.env.APP_ENV !== 'test') {
-    app.listen(3000, () => console.log('Listening on port 3000'));
+  app.listen(3000, () => console.log('Listening on port 3000'));
 }
