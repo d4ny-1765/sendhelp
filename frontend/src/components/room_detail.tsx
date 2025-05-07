@@ -129,7 +129,7 @@ const RoomDetail: React.FC = () => {
     <Box sx={{ p: 3 }}>
       <Stack spacing={2}>
         <Typography variant="h4">{room.name}</Typography>
-        <Typography variant="subtitle2">Host {room.hostId}</Typography>
+        <Typography variant="subtitle2">Host {room.roomId}</Typography>
         {room.description && <Typography>{room.description}</Typography>}
         <Typography variant="caption" color="text.secondary">
           Created at: {new Date(room.createdAt).toLocaleString()}

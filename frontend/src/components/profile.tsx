@@ -62,9 +62,7 @@ export const ProfilePage: React.FC = () => {
       if (!userId) return;
       
       try {
-        const response = await apiFetch(`/api/v1/users/${userId}`);
-        if (!response.ok) throw new Error('Failed to fetch profile');
-        const data = await response.json();
+        const data = await apiFetch(`/api/v1/users/${userId}`);
         setProfile(data);
       } catch (error) {
         console.error('Error fetching profile:', error);
@@ -99,11 +97,18 @@ export const ProfilePage: React.FC = () => {
   };
 
   const handleOpenDialog = async (type: 'followers' | 'following') => {
+    if (!userId) return;
+  
     try {
-      const response = await apiFetch(`/api/v1/following`);
-      if (!response.ok) throw new Error('Failed to fetch users');
-      const users = await response.json();
-      setDialogUsers(users);
+      const endpoint = type === 'followers' 
+        ? `/api/v1/followers/${userId}`
+        : `/api/v1/following/${userId}`;
+        
+      const users = await apiFetch(endpoint);
+      setDialogUsers(users.map((user: any) => ({
+        id: user.userId,
+        name: user.name
+      })));
       setDialogType(type);
     } catch (error) {
       console.error(`Error fetching ${type}:`, error);

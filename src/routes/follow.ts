@@ -8,7 +8,7 @@ router.post('/follow/:followingId', async (req, res, next) => {
         const followingId = +req.params.followingId;
         const followerId = +req.body.followerId;
         await followUser(followerId, followingId);
-        res.status(204).end();
+        res.status(204).json({"message": "Followed successfully" });
     } catch (err: any) {
         if (err.message === "Can't follow yourself") {
             res.status(400).json({ error: err.message });
@@ -23,7 +23,7 @@ router.delete('/follow/:followingId', async (req, res, next) => {
         const followingId = +req.params.followingId;
         const followerId = +req.body.followerId;
         await unfollowUser(followerId, followingId);
-        res.status(204).end();
+        res.status(204).json({"message": "Unfollowed successfully" });
     } catch (err) {
         next(err);
     }
