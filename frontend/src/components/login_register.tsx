@@ -59,8 +59,8 @@ export default function LoginRegister() {
     if (validateForm()) {
       try {
         const endpoint = isLogin
-        ? 'https://your-backend-service-name.onrender.com/api/v1/login'
-        : 'https://your-backend-service-name.onrender.com/api/v1/register';
+        ? 'https://stack-rant.onrender.com/api/v1/login'
+        : 'https://stack-rant.onrender.com/api/v1/register';
 
         const body = isLogin
           ? { email: formData.email, password: formData.password }
