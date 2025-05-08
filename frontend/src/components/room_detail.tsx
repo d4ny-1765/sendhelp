@@ -48,27 +48,23 @@ const RoomDetail: React.FC = () => {
 
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !auth?.user.userId || !roomId) return;
-
+  
     try {
-      const response = await fetch('/api/v1/messages', {
+      const message = await apiFetch('/api/v1/messages', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${auth?.token || ''}`
+          'Authorization': `Bearer ${auth?.token || ''}`,
         },
         body: JSON.stringify({
           body: newMessage,
           senderID: auth.user.userId,
           roomId: parseInt(roomId),
-          title: 'Comment'
-        })
+          title: 'Comment',
+        }),
       });
-
-      if (response.ok) {
-        const message = await response.json();
-        setMessages(prev => [...prev, message]);
-        setNewMessage('');
-      }
+  
+      setMessages(prev => [...prev, message]);
+      setNewMessage('');
     } catch (error) {
       console.error('Failed to send message:', error);
     }
