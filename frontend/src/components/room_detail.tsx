@@ -41,8 +41,7 @@ const RoomDetail: React.FC = () => {
 
   useEffect(() => {
     if (!roomId) return;
-    fetch(`/api/v1/messages?roomId=${roomId}`)
-      .then(res => res.json())
+    apiFetch(`/api/v1/messages?roomId=${roomId}`)
       .then(data => setMessages(data))
       .catch(console.error);
   }, [roomId]);

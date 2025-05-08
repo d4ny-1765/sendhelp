@@ -2,8 +2,8 @@ import express from "express";
 import { createRoom, getAllRooms, getRoomById, updateRoom, deleteRoom, getRoomsByTopic } from "../repositories/rooms.js";
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = "secret";
-const JWT_EXPIRES_IN = "24h";
+const JWT_SECRET = process.env.JWT_SECRET || "secret";
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "24h";
 const router = express.Router();
 
 // Get rooms (all or filtered by topic)

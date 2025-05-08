@@ -40,8 +40,7 @@ const Sidebar: React.FC = () => {
   }, [search]);
 
   useEffect(() => {
-    fetch('/api/v1/following')
-      .then(res => res.json())
+    apiFetch('/api/v1/following')
       .then(data => setFollowingIds(data.map((user: any) => user.userId)))
       .catch(console.error);
   }, []);
@@ -54,14 +53,12 @@ const Sidebar: React.FC = () => {
     const method = isFollowing ? 'DELETE' : 'POST';
     
     try {
-      const response = await apiFetch(`/api/v1/follow/${userId}`, { method });
-      if (response) {
-        setFollowingIds(prev => 
-          isFollowing 
-            ? prev.filter(id => id !== userId)
-            : [...prev, userId]
-        );
-      }
+      await apiFetch(`/api/v1/follow/${userId}`, { method });
+      setFollowingIds(prev => 
+        isFollowing 
+          ? prev.filter(id => id !== userId)
+          : [...prev, userId]
+      );
     } catch (error) {
       console.error('Failed to update follow status:', error);
     } finally {
